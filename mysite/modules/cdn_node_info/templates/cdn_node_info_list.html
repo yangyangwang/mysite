@@ -1,0 +1,99 @@
+{% extends "base/base.html" %}
+
+{% block css %}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="icon-home home-icon"></i>
+        <a href="#">主体信息</a>
+    </li>
+    <li class="active">CDN节点信息</li>
+{% endblock %}
+
+{% block page_content %}
+
+<div>
+	&nbsp;
+</div>
+
+
+<div>
+	<div class="col-xs-1">
+		<button class="btn btn-primary" id="gritter-center" 
+			onclick="window.location.href='{% url "add_cdn_node" %}'">
+			新增
+		</button>
+	</div>
+</div>
+
+<div>
+	<div class="col-xs-12" style="padding-top: 10px;">
+		<table class="table table-bordered">
+		<thead>
+			<tr>
+				<th class="center">序号</th>
+				<th class="center">CDN节点编号</th>
+                <th class="center">CDN节点名称</th>
+                <th class="center">上报状态</th>
+                <th class="center">上报时间</th>
+                <th class="center">操作</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for one in ret_list %}
+	    		<tr class="center">
+	                <td>{{ forloop.counter }} </td>
+	                <td>{{ one.cdn_node_id }}</td>
+	                <td>{{ one.cdn_node_name }}</td>
+	                <td>{{ one.report_status }}</td>
+	                <td>{{ one.report_time | default_if_none:"--" }}</td>
+	                <td>
+	                	<button class="btn btn-minier btn-info" onclick="edit({{one.id}})">编辑</button>
+	                	<button class="btn btn-minier btn-info" onclick="del({{one.id}})">删除</button>
+	                	<button class="btn btn-minier btn-info" onclick="report({{one.id}})">上报</button>
+	                </td>
+	        {% empty %}
+	            <tr class="info">
+	                <td colspan="10">
+	                <big>
+	                <strong>抱歉，目前没有数据信息。</strong>
+	                </big>
+	                </td>
+	            </tr>
+	        {% endfor %}
+		</tbody>
+		</table>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+	function edit(id) {
+	    location.href = '/add_cdn_node?id=' + id
+    }
+
+    function del(id) {
+	    var data = new Object()
+		data["id"] = id
+		$.ajax({
+		   type : "POST",
+		   url : "/del_cdn_node/",
+		   data : data,
+		   dataType : 'json',
+		   success : function(jsons) {
+		       if(jsons.code == "0"){
+		       		location.href = "/cdn_node_list"
+		       } else {
+		       	alert(jsons.msg);
+		       }
+		   },
+		   error : function() {
+			  return;
+		   }
+		});
+    }
+</script>
+{% endblock %}

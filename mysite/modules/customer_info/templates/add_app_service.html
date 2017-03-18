@@ -1,0 +1,129 @@
+{% extends "base/base.html" %}
+
+{% block css %}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="icon-home home-icon"></i>
+        <a href="#">主体信息</a>
+    </li>
+    <li class="active">网络负责人</li>
+{% endblock %}
+
+{% block page_content %}
+<div class="page-content">
+
+	<div class="page-header">
+		<h1>
+			添加网络负责人信息
+		</h1>
+	</div>
+
+	<div>
+		<div class="col-xs-12">
+			<form class="form-horizontal" role="form" action="{% url 'add_network_manager' %}" method="post">
+				<div class="space-8"></div>
+				<input hidden="hidden" type="text" name="id" value="{{edit_map.id}}"/>
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label no-padding-right" for="name">
+						姓名
+					</label>
+
+					<div class="col-sm-9">
+						<input type="text" name="name" value="{{edit_map.name}}" placeholder="" class="col-xs-10 col-sm-5" />
+					</div>
+				</div>
+
+				<div class="space-4"></div>
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label no-padding-right" for="id_type">
+						证件类型
+					</label>
+
+					<div class="col-sm-9">
+						<select name="id_type" id="id_type" class="col-xs-10 col-sm-5">
+							<option value="">&nbsp;</option>
+							<option value="{{edit_map.id_type}}" selected="selected">{{edit_map.id_type_name}}</option>
+							{% for one in select_item_list %}
+								<option value="{{one.id}}">{{one.name}}</option>
+							{% endfor %}
+						</select>
+					</div>
+				</div>
+
+				<div class="space-4"></div>
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label no-padding-right" for="id_number">
+						证件号码
+					</label>
+
+					<div class="col-sm-9">
+						<input type="text" name="id_number" value="{{edit_map.id_number}}" placeholder="" class="col-xs-10 col-sm-5" />
+					</div>
+				</div>
+
+				<div class="space-4"></div>
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label no-padding-right" for="tel">
+						固定电话
+					</label>
+
+					<div class="col-sm-9">
+						<input type="text" name="tel" value="{{edit_map.tel}}" placeholder="" class="col-xs-10 col-sm-5" />
+					</div>
+				</div>
+
+				<div class="space-4"></div>
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label no-padding-right" for="phone">
+						移动电话
+					</label>
+
+					<div class="col-sm-9">
+						<input type="text" name="phone" value="{{edit_map.phone}}" placeholder="" class="col-xs-10 col-sm-5" />
+					</div>
+				</div>
+
+				<div class="space-4"></div>
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label no-padding-right" for="email">
+						电子邮件
+					</label>
+
+					<div class="col-sm-9">
+						<input type="text" name="email" value="{{edit_map.email}}" placeholder="" class="col-xs-10 col-sm-5" />
+					</div>
+				</div>
+
+				<div class="space-4"></div>
+
+				<div class="clearfix form-actions">
+					<div class="col-md-offset-3 col-md-9">
+						<button class="btn btn-info" type="submit">
+							<i class="icon-ok bigger-110"></i>
+							保存
+						</button>
+
+						&nbsp; &nbsp; &nbsp;
+						<button class="btn" type="reset" onclick="javascript:history.back()">
+							<i class="icon-undo bigger-110"></i>
+							取消
+						</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+{% endblock %}

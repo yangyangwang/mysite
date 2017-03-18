@@ -1,0 +1,148 @@
+{% extends "base/base.html" %}
+
+{% block css %}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="icon-home home-icon"></i>
+        <a href="#">主体信息</a>
+    </li>
+    <li class="active">经营者单位</li> 
+{% endblock %}
+
+{% block page_content %}
+<div class="page-content">
+
+	<div class="page-header">
+		<h1>
+			经营者单位信息
+		</h1>
+	</div>
+
+	<div>
+		<div class="col-xs-12">
+			<form class="form-horizontal" role="form" action="{% url 'add_business_unit' %}" method="post">
+				<div class="space-8"></div>
+				<input hidden="hidden" type="text" name="id" value="{{edit_map.id}}"/>
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label no-padding-right" for="unit_licence">
+						IDC/ISP许可证
+					</label>
+
+					<div class="col-sm-9">
+						<input type="text" name="unit_licence" value="{{edit_map.unit_licence}}" placeholder="" class="col-xs-10 col-sm-5" />
+					</div>
+				</div>
+
+				<div class="space-4"></div>
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label no-padding-right" for="unit_name">
+						单位名称
+					</label>
+
+					<div class="col-sm-9">
+						<input type="text" name="unit_name" value="{{edit_map.unit_name}}" placeholder="" class="col-xs-10 col-sm-5" />
+					</div>
+				</div>
+
+				<div class="space-4"></div>
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label no-padding-right" for="unit_addr">
+						单位地址
+					</label>
+
+					<div class="col-sm-9">
+						<input type="text" name="unit_addr" value="{{edit_map.unit_addr}}" placeholder="" class="col-xs-10 col-sm-5" />
+					</div>
+				</div>
+
+				<div class="space-4"></div>
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label no-padding-right" for="unit_zipcode">
+						单位邮编
+					</label>
+
+					<div class="col-sm-9">
+						<input type="text" name="unit_zipcode" value="{{edit_map.unit_zipcode}}" placeholder="" class="col-xs-10 col-sm-5" />
+					</div>
+				</div>
+
+				<div class="space-4"></div>
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label no-padding-right" for="unit_faren">
+						企业法人
+					</label>
+
+					<div class="col-sm-9">
+						<input type="text" name="unit_faren" value="{{edit_map.unit_faren}}" placeholder="" class="col-xs-10 col-sm-5" />
+					</div>
+				</div>
+
+				<div class="space-4"></div>
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label no-padding-right" for="netinfo_people">
+						网络安全责任人
+					</label>
+
+					<div class="col-sm-9">
+						<select name="netinfo_people" id="netinfo_people" class="col-xs-10 col-sm-5">
+							<option value="{{edit_map.netinfo_people}}" selected="selected">{{edit_map.netinfo_people_name}}</option>
+							{% for one in select_item_list %}
+								<option value="{{one.id}}">{{one.name}}</option>
+							{% endfor %}
+						</select>
+					</div>
+				</div>
+
+
+				<div class="space-4"></div>
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label no-padding-right" for="emergency_people">
+						应急联系人
+					</label>
+
+					<div class="col-sm-9">
+						<select name="emergency_people" id="emergency_people" class="col-xs-10 col-sm-5">
+							<option value="{{edit_map.emergency_people}}" selected="selected">{{edit_map.emergency_people_name}}</option>
+							{% for one in select_item_list %}
+								<option value="{{one.id}}">{{one.name}}</option>
+							{% endfor %}
+						</select>
+					</div>
+				</div>
+
+
+				<div class="space-4"></div>
+
+				<div class="clearfix form-actions">
+					<div class="col-md-offset-3 col-md-9">
+						<button class="btn btn-info" type="submit">
+							<i class="icon-ok bigger-110"></i>
+							保存
+						</button>
+
+						&nbsp; &nbsp; &nbsp;
+						<button class="btn" type="reset" onclick="javascript:history.back()">
+							<i class="icon-undo bigger-110"></i>
+							取消
+						</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+
+
+{% block js %}
+{% endblock %}

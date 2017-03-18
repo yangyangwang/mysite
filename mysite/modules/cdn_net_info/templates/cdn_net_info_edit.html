@@ -1,0 +1,77 @@
+{% extends "base/base.html" %}
+
+{% block css %}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="icon-home home-icon"></i>
+        <a href="#">资源信息</a>
+    </li>
+    <li class="active">cdn子网信息</li>
+{% endblock %}
+
+{% block page_content %}
+<div class="page-content">
+
+	<div class="page-header">
+		<h1>
+			CDN子网信息
+		</h1>
+	</div>
+
+	<div>
+		<div class="col-xs-12">
+			<form class="form-horizontal" role="form" action="{% url 'add_cdn_net' %}" method="post">
+				<div class="space-8"></div>
+				<input hidden="hidden" type="text" name="id" value="{{edit_map.id}}"/>
+				<input hidden="hidden" type="text" name="cdn_net_id" value="{{edit_map.cdn_net_id}}"/>
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label no-padding-right" for="cdn_top_domain">
+						顶级域名
+					</label>
+
+					<div class="col-sm-9">
+						<input type="text" name="cdn_top_domain" value="{{edit_map.cdn_top_domain}}" placeholder="" class="col-xs-10 col-sm-5" />
+					</div>
+				</div>
+
+				
+				<div class="space-4"></div>
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label no-padding-right" for="top_domain_record_num">
+						顶级域名备案号
+					</label>
+
+					<div class="col-sm-9">
+						<input type="text" name="top_domain_record_num" value="{{edit_map.top_domain_record_num}}" placeholder="" class="col-xs-10 col-sm-5" />
+					</div>
+				</div>
+				
+				<div class="space-4"></div>
+
+				<div class="clearfix form-actions">
+					<div class="col-md-offset-3 col-md-9">
+						<button class="btn btn-info" type="submit">
+							<i class="icon-ok bigger-110"></i>
+							保存
+						</button>
+
+						&nbsp; &nbsp; &nbsp;
+						<button class="btn" type="reset" onclick="javascript:history.back()">
+							<i class="icon-undo bigger-110"></i>
+							取消
+						</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+{% endblock %}

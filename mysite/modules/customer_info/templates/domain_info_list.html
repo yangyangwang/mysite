@@ -1,0 +1,110 @@
+{% extends "base/base.html" %}
+
+{% block css %}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="icon-home home-icon"></i>
+        <a href="#">主体信息</a>
+    </li>
+    <li class="active">域名信息</li>
+{% endblock %}
+
+{% block page_content %}
+
+<div>
+	&nbsp;
+</div>
+
+
+<div>
+	<div class="col-xs-1">
+		<button class="btn btn-primary" id="gritter-center" 
+			onclick="_add({{app_service_id}})">
+			新增
+		</button>
+	</div>
+</div>
+
+<div>
+	<div class="col-xs-12" style="padding-top: 10px;">
+		<table class="table table-bordered">
+		<thead>
+			<tr>
+				<th class="center">序号</th>
+				<th class="center">域名编号</th>
+				<th class="center">域名</th>
+                <th class="center">源站地址</th>
+                <th class="center">备案号或许可证号</th>
+                <th class="center">顶级域名</th>
+                <th class="center">操作</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for one in ret_list %}
+	    		<tr class="center">
+	                <td>{{ forloop.counter }} </td>
+	                <td>{{ one.domain_id }}</td>
+	                <td>{{ one.domain }}</td>
+	                <td>{{ one.source_address }}</td>
+	                <td>{{ one.record_num }}</td>
+	                <td>{{ one.top_domain }}</td>
+	                <td>
+	                	<button class="btn btn-minier btn-info" onclick="edit({{one.id}})">编辑</button>
+	                	<button class="btn btn-minier btn-info" onclick="del({{one.id}})">删除</button>
+	                </td>
+	        {% empty %}
+	            <tr class="info">
+	                <td colspan="10">
+	                <big>
+	                <strong>抱歉，目前没有数据信息。</strong>
+	                </big>
+	                </td>
+	            </tr>
+	        {% endfor %}
+		</tbody>
+		</table>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+var global_app_service_id = ""
+
+	function _add(app_service_id) {
+		if(app_service_id != null){
+			global_app_service_id = app_service_id
+		}
+		location.href = '/add_domain_info?app_service_id=' + global_app_service_id
+	}
+
+	function edit(id) {
+	    location.href = '/add_domain_info?id=' + id
+    }
+
+    function del(id) {
+	    var data = new Object()
+		data["id"] = id
+		$.ajax({
+		   type : "POST",
+		   url : "/del_domain_info/",
+		   data : data,
+		   dataType : 'json',
+		   success : function(jsons) {
+		       if(jsons.code == "0"){
+		       		location.href = "/domain_info_list?app_service_id=" + jsons.app_service_id
+		       } else {
+		       	global_app_service_id = jsons.app_service_id
+		       	alert(jsons.msg);
+		       }
+		   },
+		   error : function() {
+			  return;
+		   }
+		});
+    }
+</script>
+{% endblock %}

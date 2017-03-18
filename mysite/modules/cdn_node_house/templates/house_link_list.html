@@ -1,0 +1,112 @@
+{% extends "base/base.html" %}
+
+{% block css %}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="icon-home home-icon"></i>
+        <a href="#">主体信息</a>
+    </li>
+    <li class="active">CDN节点机房链路信息</li>
+{% endblock %}
+
+{% block page_content %}
+
+<div>
+	&nbsp;
+</div>
+
+
+<div>
+	<div class="col-xs-1">
+		<button class="btn btn-primary" id="gritter-center" 
+			onclick="_add({{house_id}})">
+			新增
+		</button>
+	</div>
+</div>
+
+<div>
+	<div class="col-xs-12" style="padding-top: 10px;">
+		<table class="table table-bordered">
+		<thead>
+			<tr>
+				<th class="center">序号</th>
+				<th class="center">链路信息编号</th>
+				<th class="center">网关IP地址</th>
+                <th class="center">链路带宽</th>
+                <th class="center">链路类型</th>
+                <th class="center">接入单位</th>
+                <th class="center">链路分配时间</th>
+                <th class="center">操作</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for one in ret_list %}
+	    		<tr class="center">
+	                <td>{{ forloop.counter }} </td>
+	                <td>{{ one.id }}</td>
+	                <td>{{ one.gateway_ip }}</td>
+	                <td>{{ one.link_bandwidth }}</td>
+	                <td>{{ one.link_type }}</td>
+	                <td>{{ one.link_access_unit }}</td>
+	                <td>{{ one.link_time }}</td>
+	                <td>
+	                	<button class="btn btn-minier btn-info" onclick="edit({{one.id}})">编辑</button>
+	                	<button class="btn btn-minier btn-info" onclick="del({{one.id}})">删除</button>
+	                </td>
+	        {% empty %}
+	            <tr class="info">
+	                <td colspan="10">
+	                <big>
+	                <strong>抱歉，目前没有数据信息。</strong>
+	                </big>
+	                </td>
+	            </tr>
+	        {% endfor %}
+		</tbody>
+		</table>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+var global_house_id = ""
+
+	function _add(house_id) {
+		if(house_id != null){
+			global_house_id = house_id
+		}
+		location.href = '/add_house_link?house_id=' + global_house_id
+	}
+
+	function edit(id) {
+	    location.href = '/add_house_link?id=' + id
+    }
+
+    function del(id) {
+	    var data = new Object()
+		data["id"] = id
+		$.ajax({
+		   type : "POST",
+		   url : "/del_house_link/",
+		   data : data,
+		   dataType : 'json',
+		   success : function(jsons) {
+		       if(jsons.code == "0"){
+		       		location.href = "/house_link_list?house_id=" + jsons.house_id
+		       } else {
+		       	global_house_id = jsons.house_id
+		       	alert(jsons.msg);
+		       }
+		   },
+		   error : function() {
+			  return;
+		   }
+		});
+    }
+</script>
+{% endblock %}

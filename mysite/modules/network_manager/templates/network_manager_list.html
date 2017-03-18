@@ -1,0 +1,104 @@
+{% extends "base/base.html" %}
+
+{% block css %}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="icon-home home-icon"></i>
+        <a href="#">主体信息</a>
+    </li>
+    <li class="active">网络负责人</li>
+{% endblock %}
+
+{% block page_content %}
+
+<div>
+	&nbsp;
+</div>
+
+
+<div>
+	<div class="col-xs-1">
+		<button class="btn btn-primary" id="gritter-center" 
+			onclick="window.location.href='{% url "add_network_manager" %}'">
+			新增
+		</button>
+	</div>
+</div>
+
+<div>
+	<div class="col-xs-12" style="padding-top: 10px;">
+		<table class="table table-bordered">
+		<thead>
+			<tr>
+				<th class="center">序号</th>
+				<th class="center">人员ID</th>
+                <th class="center">姓名</th>
+                <th class="center">证件类型</th>
+                <th class="center">证件号码</th>
+                <th class="center">固定电话</th>
+                <th class="center">移动电话</th>
+                <th class="center">email地址</th>
+                <th class="center">操作</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for one in ret_list %}
+	    		<tr class="center">
+	                <td>{{ forloop.counter }} </td>
+	                <td>{{ one.id }}</td>
+	                <td>{{ one.name }}</td>
+	                <td>{{ one.id_type }}</td>
+	                <td>{{ one.id_number }}</td>
+	                <td>{{ one.tel }}</td>
+	                <td>{{ one.phone }}</td>
+	                <td>{{ one.email }}</td>
+	                <td>
+	                	<button class="btn btn-minier btn-info" onclick="edit({{one.id}})">编辑</button>
+	                	<button class="btn btn-minier btn-info" onclick="del({{one.id}})">删除</button>
+	                </td>
+	        {% empty %}
+	            <tr class="info">
+	                <td colspan="10">
+	                <big>
+	                <strong>抱歉，目前没有数据信息。</strong>
+	                </big>
+	                </td>
+	            </tr>
+	        {% endfor %}
+		</tbody>
+		</table>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+	function edit(id) {
+	    location.href = '/add_network_manager?id=' + id
+    }
+
+    function del(id) {
+	    var data = new Object()
+		data["id"] = id
+		$.ajax({
+		   type : "POST",
+		   url : "/del_network_manager/",
+		   data : data,
+		   dataType : 'json',
+		   success : function(jsons) {
+		       if(jsons.code == "0"){
+		       		location.href = "/network_manager_list"
+		       } else {
+		       	alert(jsons.msg);
+		       }
+		   },
+		   error : function() {
+			  return;
+		   }
+		});
+    }
+</script>
+{% endblock %}

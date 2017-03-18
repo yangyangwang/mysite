@@ -1,0 +1,92 @@
+{% extends "base/base.html" %}
+
+{% block css %}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="icon-home home-icon"></i>
+        <a href="#">主体信息</a>
+    </li>
+    <li class="active">客户信息</li>
+{% endblock %}
+
+{% block page_content %}
+<div class="page-content">
+
+	<div class="page-header">
+		<h1>
+			服务内容
+		</h1>
+	</div>
+
+	<div>
+		<div class="col-xs-12">
+			<form class="form-horizontal" role="form" action="{% url 'add_app_service' %}" method="post">
+				<div class="space-8"></div>
+				<input hidden="hidden" type="text" name="id" value="{{edit_map.id}}"/>
+				<input hidden="hidden" type="text" name="customer_id" value="{{customer_id}}"/>
+				
+
+				<div class="row">
+					<div class="col-xs-12 col-sm-5">
+						<div class="control-group">
+							<label class="control-label bolder blue">Checkbox</label>
+
+							<div class="checkbox">
+								<label>
+									<input name="form-field-checkbox" type="checkbox" class="ace" />
+									<span class="lbl"> choice 1</span>
+								</label>
+							</div>
+
+							<div class="checkbox">
+								<label>
+									<input name="form-field-checkbox" type="checkbox" class="ace" />
+									<span class="lbl"> choice 2</span>
+								</label>
+							</div>
+
+							<div class="checkbox">
+								<label>
+									<input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" />
+									<span class="lbl"> choice 3</span>
+								</label>
+							</div>
+
+							<div class="checkbox">
+								<label class="block">
+									<input name="form-field-checkbox" disabled="" type="checkbox" class="ace" />
+									<span class="lbl"> disabled</span>
+								</label>
+							</div>
+						</div>
+					</div>
+				</div><!-- /row -->
+
+				<div class="clearfix form-actions">
+					<div class="col-md-offset-3 col-md-9">
+						<button class="btn btn-info" type="submit">
+							<i class="icon-ok bigger-110"></i>
+							保存
+						</button>
+
+						&nbsp; &nbsp; &nbsp;
+						<button class="btn" type="reset" onclick="javascript:history.back()">
+							<i class="icon-undo bigger-110"></i>
+							取消
+						</button>
+					</div>
+				</div>
+
+				<div class="space-4"></div>
+				
+			</form>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+{% endblock %}

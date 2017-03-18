@@ -1,0 +1,113 @@
+{% extends "base/base.html" %}
+
+{% block css %}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="icon-home home-icon"></i>
+        <a href="#">资源信息</a>
+    </li>
+    <li class="active">CDN节点机房信息</li>
+{% endblock %}
+
+{% block page_content %}
+
+<div>
+	&nbsp;
+</div>
+
+
+<div>
+	<div class="col-xs-1">
+		<button class="btn btn-primary" id="gritter-center" 
+			onclick="window.location.href='{% url "add_cdn_node_house" %}'">
+			新增
+		</button>
+	</div>
+</div>
+
+<div>
+	<div class="col-xs-12" style="padding-top: 10px;">
+		<table class="table table-bordered">
+		<thead>
+			<tr>
+				<th class="center">序号</th>
+				<th class="center">机房编号</th>
+                <th class="center">机房名称</th>
+                <th class="center">机房属性</th>
+                <th class="center">所属经营者单位</th>
+                <th class="center">负责人信息</th>
+                <th class="center">链路信息</th>
+                <th class="center">机架信息</th>
+                <th class="center">IP地址段信息</th>
+                <th class="center">操作</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for one in ret_list %}
+	    		<tr class="center">
+	                <td>{{ forloop.counter }} </td>
+	                <td>{{ one.cdn_house_id }}</td>
+	                <td>{{ one.cdn_house_name }}</td>
+	                <td>{{ one.cdn_house_nature }}</td>
+	                <td>{{ one.business_unit }}</td>
+	                <td>{{ one.network_people }}</td>
+	                <td>
+	                	<a href="/house_link_list?id=+{{one.id}}">{{ one.link_info }}</a>	        
+	                </td>
+	                <td>
+	                	<a href="/house_frame_list?id=+{{one.id}}">{{ one.frame_info }}</a>
+	                </td>
+	                <td>
+	                	<a href="/house_ipseg_list?id=+{{one.id}}">{{ one.ipseg_info }}</a>
+	                </td>
+	                <td>
+	                	<button class="btn btn-minier btn-info" onclick="edit({{one.id}})">编辑</button>
+	                	<button class="btn btn-minier btn-info" onclick="del({{one.id}})">删除</button>
+	                	<button class="btn btn-minier btn-info" onclick="report({{one.id}})">上报</button>
+	                </td>
+	        {% empty %}
+	            <tr class="info">
+	                <td colspan="10">
+	                <big>
+	                <strong>抱歉，目前没有数据信息。</strong>
+	                </big>
+	                </td>
+	            </tr>
+	        {% endfor %}
+		</tbody>
+		</table>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+	function edit(id) {
+	    location.href = '/add_cdn_node_house?id=' + id
+    }
+
+    function del(id) {
+	    var data = new Object()
+		data["id"] = id
+		$.ajax({
+		   type : "POST",
+		   url : "/del_cdn_node_house/",
+		   data : data,
+		   dataType : 'json',
+		   success : function(jsons) {
+		       if(jsons.code == "0"){
+		       		location.href = "/cdn_node_house_list"
+		       } else {
+		       	alert(jsons.msg);
+		       }
+		   },
+		   error : function() {
+			  return;
+		   }
+		});
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends "base/base.html" %}
+
+{% block css %}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="icon-home home-icon"></i>
+        <a href="#">资源信息</a>
+    </li>
+    <li class="active">cdn节点信息</li>
+{% endblock %}
+
+{% block page_content %}
+<div class="page-content">
+
+	<div class="page-header">
+		<h1>
+			CDN子网信息
+		</h1>
+	</div>
+
+	<div>
+		<div class="col-xs-12">
+			<form class="form-horizontal" role="form" action="{% url 'add_cdn_node' %}" method="post">
+				<div class="space-8"></div>
+				<input hidden="hidden" type="text" name="id" value="{{edit_map.id}}"/>
+				<input hidden="hidden" type="text" name="cdn_net_id" value="{{edit_map.cdn_net_id}}"/>
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label no-padding-right" for="cdn_node_name">
+						节点名称
+					</label>
+
+					<div class="col-sm-9">
+						<input type="text" name="cdn_node_name" value="{{edit_map.cdn_node_name}}" placeholder="" class="col-xs-10 col-sm-5" />
+					</div>
+				</div>
+
+				
+				<div class="space-4"></div>
+
+				<div class="clearfix form-actions">
+					<div class="col-md-offset-3 col-md-9">
+						<button class="btn btn-info" type="submit">
+							<i class="icon-ok bigger-110"></i>
+							保存
+						</button>
+
+						&nbsp; &nbsp; &nbsp;
+						<button class="btn" type="reset" onclick="javascript:history.back()">
+							<i class="icon-undo bigger-110"></i>
+							取消
+						</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+{% endblock %}
