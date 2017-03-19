@@ -137,9 +137,15 @@ def init_service_content_table(tmp_list, obj):
 	print("---init %s complate---" % obj)
 
 
-# obj_single = Signal(providing_args=["allen"])
+"""
+	这个必须放在management.py, 这样在python manage.py migrate时才会运行
+"""
 
-# @receiver(obj_single) 
+
+# 初始化一个信号
+obj_single = Signal(providing_args=["remarks"])
+
+@receiver(obj_single) 
 def init_dict_table(sender, **kwargs):
 	# 初始化其他字典表
 	for one in map_list:
@@ -149,6 +155,9 @@ def init_dict_table(sender, **kwargs):
 	init_service_content_table(ServiceContentMap, ServiceContent)
 
 
-# obj_single.connect(init_dict_table)
-
-# obj_single.send(sender=None, allen="init db" )
+# 监测是否字典表已经初始化了
+try:
+	if not UnitNature.objects.all():
+		obj_single.send(sender=None, remarks="init db dict tables")
+except Exception as e:
+	print("init db exception!")

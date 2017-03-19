@@ -13,17 +13,29 @@
 
 {% block page_content %}
 
-<div>
-	&nbsp;
-</div>
+<div class="col-sm-12">
+	<div class="widget-box">
+		<div class="widget-header">
+			<h4 class="smaller">控制台</h4>
+		</div>
 
+		<div class="widget-body">
+			<div class="widget-main">
+				姓名: &nbsp;
+				<input type="text" name="name" id="name" value="{{name}}">
 
-<div>
-	<div class="col-xs-1">
-		<button class="btn btn-primary" id="gritter-center" 
-			onclick="window.location.href='{% url "add_network_manager" %}'">
-			新增
-		</button>
+				&nbsp;&nbsp;&nbsp;&nbsp;
+				<button class="btn btn-info btn-sm" id="gritter-center" 
+					onclick="_query()">
+					查询
+				</button>
+				&nbsp;&nbsp;
+				<button class="btn btn-info btn-sm" id="gritter-center" 
+					onclick="window.location.href='{% url "add_network_manager" %}'">
+					新增
+				</button>
+			</div>
+		</div>
 	</div>
 </div>
 
@@ -70,12 +82,46 @@
 		</tbody>
 		</table>
 	</div>
+
+	<div>
+        <ul class="pager">
+            <li class="">
+                <span> <b> 共 2 条 1 页</b> </span>
+            </li>
+
+            <li class=""><a href="?page=1"> 首页 </a></li>
+
+            <li class="">
+                <a href="?page={{ page_obj.previous_page_number }}">
+                    <span aria-hidden="true">&larr;</span> 上一页
+                </a>
+            </li>
+
+            <li class="active">
+                <span>1 - 2 </span>
+            </li>
+
+            <li class="">
+                <a href="?page={{ page_obj.next_page_number }}">
+                    下一页 <span aria-hidden="true">&rarr;</span>
+                </a>
+            </li>
+
+            <li><a href="?page={{ page_obj.paginator.num_pages }}"> 末页 </a></li>
+        </ul>
+    </div>
 </div>
+
 
 {% endblock %}
 
 {% block js %}
 <script type="text/javascript">
+	function _query() {
+		var name = $("#name").val()
+		location.href = '/network_manager_list/?name=' + name
+	}
+
 	function edit(id) {
 	    location.href = '/add_network_manager?id=' + id
     }

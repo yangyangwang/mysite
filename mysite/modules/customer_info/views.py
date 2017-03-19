@@ -6,6 +6,7 @@ from .models import CustomerInfo, AppServiceInfo, DomainInfo
 from ..business_unit.models import BusinessUnit
 from ..network_manager.models import NetworkManager
 from ..share_part.share_func import *
+from ..dict_table.models import ServiceContent
 from ..dict_table.models import UnitNature, IdType, ReportStatus
 import traceback
 import json
@@ -144,6 +145,16 @@ def del_customer_info(request):
     return HttpResponse(json.dumps(back_dict))
 
 
+# 获取服务内容名称
+def get_china_service_content(data=None):
+    ret_string = ""
+    data_list = json.loads(data)
+    for one in data_list:
+        x = get_dict_name(one, ServiceContent)
+        ret_string +=  u"%s, " % x
+    return ret_string
+
+
 # 获取应用服务信息
 def app_service_list(request):
 
@@ -155,12 +166,45 @@ def app_service_list(request):
     ret_list = AppServiceInfo.objects.filter(customer_id_id=customer_id)
     for one in ret_list:
         one.domain_info = get_domain_num(one.id)
+        one.service_content = get_china_service_content(one.service_content)
     return render_to_response('application_service.html', locals())
 
 
 # 获取应用服务对应的域名数量
 def get_domain_num(tmp_id=None):
     return DomainInfo.objects.filter(app_service_id_id=tmp_id).count()
+
+
+# 组装服务内容数据格式供页面使用
+# [{"key": "500", "value": "基础应用", "child": [{"1": u"即时通信"}, {"2": u"搜索引擎"}]},{}]
+def parse_service_content():
+
+    ret_list = list()
+    parent_content = ServiceContent.objects.filter(parent_id="/")
+    for one in parent_content:
+        tmp_map = {
+            "key": one.key,
+            "value": one.value
+        }
+        ret_list.append(tmp_map)
+    for i in ret_list:
+        child = ServiceContent.objects.filter(parent_id=i["key"])
+        i["child"] = child
+        i["length"] = len(child)
+
+    return ret_list
+
+
+# 处理页面提交的服务内容
+def get_service_content(data=None):
+
+    ret_list = list()
+    parent_content = ServiceContent.objects.filter(parent_id="/")
+    for one in parent_content:
+        content = data.getlist(one.key, [])
+        ret_list.extend(content)
+
+    return ret_list
 
 
 # 添加应用服务信息
@@ -171,6 +215,15 @@ def add_app_service(request):
 
     def _get():
         customer_id = request.GET.get("customer_id")
+        # 构建服务内容数据格式
+        ret_list = parse_service_content()
+        if request.GET.get("id"):
+            tmp_id = request.GET.get("id")
+            customer_id = AppServiceInfo.objects.get(id=tmp_id).customer_id_id
+            edit_map = AppServiceInfo.objects.filter(id=tmp_id)[0]
+
+            edit_map.service_content = json.loads(edit_map.service_content)
+            print(edit_map)
         return render_to_response('application_service_edit.html', locals())
 
     if request.method == "GET":
@@ -181,22 +234,15 @@ def add_app_service(request):
     print("#####################################")
 
     tmp_id = request.POST.get("id")
-    service_content = request.POST.get("service_content", '["1", "2"]')
+    service_content = get_service_content(request.POST)
+    print("service_content:99999", service_content, type(service_content))
     customer_id = request.POST.get("customer_id")
 
 
     def _update():
         try:
             AppServiceInfo.objects.filter(id=tmp_id).update(
-                unit_name = unit_name,
-                unit_address = unit_address,
-                unit_zipcode = unit_zipcode,
-                unit_nature = unit_nature,
-                id_type = id_type,
-                id_no = id_no,
-                network_people = int(network_people),
-                register_time = register_time,
-                business_unit = int(business_unit)
+                service_content = service_content
             )
         except:
             print(traceback.print_exc())
@@ -207,8 +253,8 @@ def add_app_service(request):
         try:
             AppServiceInfo.objects.create(
                 service_id = get_auto_16_id(),
-                service_content = service_content,
-                customer_id_id = customer_id,
+                service_content = json.dumps(service_content),
+                customer_id_id = customer_id
             )
         except:
             print(traceback.print_exc())
@@ -223,6 +269,7 @@ def add_app_service(request):
 
 # 删除应用服务信息
 def del_app_service(request):
+
     back_dict = {"code": 0, "msg": "success"}
     back_dict_err = {"code": 1, "msg": "error"}
 

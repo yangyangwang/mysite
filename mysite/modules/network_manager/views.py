@@ -8,11 +8,25 @@ from django.shortcuts import render_to_response
 from ..share_part.share_func import *
 from ..dict_table.models import IdType
 from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
+from django.core.paginator import Paginator
 
 
 # Create your views here.
 def network_manager_list(request):
-    ret_list = NetworkManager.objects.all()
+    
+    # 按姓名查询   
+    if request.GET.get("name"):
+        name = request.GET.get("name")
+        ret_list = NetworkManager.objects.filter(name=name.strip())
+    else:
+        ret_list = NetworkManager.objects.all()
+
+    serverinfolist = NetworkManager.objects.all()
+    paginator = Paginator(serverinfolist, 2)
+    print("123:", paginator)
+    ret_list = paginator.page(1)  
+    # print("contact:", contacts)
+
     for one in ret_list:
         one.id_type = get_dict_name(one.id_type, IdType)
     return render_to_response('network_manager_list.html', locals())
