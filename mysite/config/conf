@@ -1,0 +1,12 @@
+[database]
+engine = mysql
+dbname = isms_main
+username = root
+password = 123456
+port = 3306
+host = 127.0.0.1
+
+[path]
+local_xml_path = /xml_data/xml_file
+local_xsd_path = /xml_data/xsd_file
+

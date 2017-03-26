@@ -13,17 +13,29 @@
 
 {% block page_content %}
 
-<div>
-	&nbsp;
-</div>
+<div class="col-sm-12">
+	<div class="widget-box">
+		<div class="widget-header">
+			<h4 class="smaller">控制台</h4>
+		</div>
 
+		<div class="widget-body">
+			<div class="widget-main">
+				客户名称 :&nbsp;
+				<input type="text" name="customer_name" id="customer_name" value="{{customer_name}}">
 
-<div>
-	<div class="col-xs-1">
-		<button class="btn btn-primary" id="gritter-center" 
-			onclick="_add({{customer_id}})">
-			新增
-		</button>
+				&nbsp;&nbsp;&nbsp;&nbsp;
+				<button class="btn btn-info btn-sm" id="gritter-center" 
+					onclick="_query()">
+					查询
+				</button>
+				&nbsp;&nbsp;
+				<button class="btn btn-info btn-sm" id="gritter-center" 
+					onclick="window.location.href='{% url "add_app_service" %}'">
+					新增
+				</button>
+			</div>
+		</div>
 	</div>
 </div>
 
@@ -35,23 +47,41 @@
 				<th class="center">序号</th>
 				<th class="center">服务编号</th>
                 <th class="center">服务内容</th>
+                <th class="center">客户名称</th>
                 <th class="center">域名信息</th>
+                <th class="center">上报状态</th>
+                <th class="center">上报时间</th>
                 <th class="center">操作</th>
 			</tr>
 		</thead>
 		<tbody>
-			{% for one in ret_list %}
+			{% for one in page_obj.object_list %}
 	    		<tr class="center">
 	                <td>{{ forloop.counter }} </td>
 	                <td>{{ one.service_id }}</td>
 	                <td>{{ one.service_content }}</td>
+	                <td>{{ one.customer_name }}</td> 
 	                <td>
 	                	<a href="/domain_info_list?app_service_id=+{{one.id}}">{{ one.domain_info }}</a>
 	                
 	                </td>
+	                <td>{{ one.report_status }}</td>
+	                <td>{{ one.report_time }}</td>
 	                <td>
 	                	<button class="btn btn-minier btn-info" onclick="edit({{one.id}})">编辑</button>
 	                	<button class="btn btn-minier btn-info" onclick="del({{one.id}})">删除</button>
+	                	{% ifequal one.report_status '新增未上报' %}
+	                		<button class="btn btn-minier btn-info" onclick="report({{one.id}})">上报</button>
+	                	{% endifequal %}
+	                	{% ifequal one.report_status '更新未上报'%}
+	                		<button class="btn btn-minier btn-info" onclick="report({{one.id}})">上报</button>
+	                	{% endifequal %}
+	                	{% ifequal one.report_status '新增已上报' %}
+	                		<button class="btn btn-minier btn-info" onclick="_post({{one.id}}, '/logout_customer_info/', '/app_service_list', 'service')">注销</button>
+	                	{% endifequal %}
+	                	{% ifequal one.report_status '更新已上报'%}
+	                		<button class="btn btn-minier btn-info" onclick="_post({{one.id}}, '/logout_customer_info/', '/app_service_list', 'service')">注销</button>
+	                	{% endifequal %}
 	                </td>
 	        {% empty %}
 	            <tr class="info">
@@ -64,6 +94,8 @@
 	        {% endfor %}
 		</tbody>
 		</table>
+
+		{% include  "base/paginator.html" %}
 	</div>
 </div>
 
@@ -71,15 +103,56 @@
 
 {% block js %}
 <script type="text/javascript">
-var global_customer_id = ""
-
-	function _add(customer_id) {
-		if(customer_id != null){
-			global_customer_id = customer_id
-		}
-
-		location.href = '/add_app_service?customer_id=' + global_customer_id
+	function _query() {
+		var customer_name = $("#customer_name").val()
+		location.href = '/app_service_list/?customer_name=' + customer_name
 	}
+
+	function _post(id, go_url, back_url, flag) {
+    	var data = new Object()
+		data["id"] = id
+		data["flag"] = flag
+		$.ajax({
+		   type : "POST",
+		   url : go_url,
+		   data : data,
+		   dataType : 'json',
+		   success : function(jsons) {
+		       if(jsons.code == "0"){
+		       		alert(jsons.msg)
+		       		location.href = back_url
+		       } else {
+		       	alert(jsons.msg);
+		       }
+		   },
+		   error : function() {
+			  return;
+		   }
+		});
+    }
+
+	function report(id) {
+	    var data = new Object()
+		data["id"] = id
+		$.ajax({
+		   type : "POST",
+		   url : "/report_app_service/",
+		   data : data,
+		   dataType : 'json',
+		   success : function(jsons) {
+		       if(jsons.code == "0"){
+		       		alert(jsons.msg)
+		       		location.href = "/app_service_list"
+		       } else {
+		       	alert(jsons.msg);
+		       }
+		   },
+		   error : function() {
+			  return;
+		   }
+		});
+    }
+
 
 	function edit(id) {
 	    location.href = '/add_app_service?id=' + id

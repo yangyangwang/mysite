@@ -25,7 +25,10 @@ urlpatterns = [
     url(r'', include('modules.cdn_net_info.urls')),
     url(r'', include('modules.cdn_node_info.urls')),
     url(r'', include('modules.cdn_node_house.urls')),
-    # url(r'', include('modules.dict_table.urls')),
+    url(r'', include('modules.active_resources.urls')),
+    url(r'', include('modules.log_management.urls')),
+    url(r'', include('modules.command_management.urls')),
+    url(r'', include('modules.suspected_exception.urls')),
 
     url(r'^admin/', admin.site.urls),
 ]

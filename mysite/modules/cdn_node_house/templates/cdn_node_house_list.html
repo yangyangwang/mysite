@@ -41,6 +41,8 @@
                 <th class="center">链路信息</th>
                 <th class="center">机架信息</th>
                 <th class="center">IP地址段信息</th>
+                <th class="center">上报状态</th>
+                <th class="center">上报时间</th>
                 <th class="center">操作</th>
 			</tr>
 		</thead>
@@ -62,10 +64,12 @@
 	                <td>
 	                	<a href="/house_ipseg_list?id=+{{one.id}}">{{ one.ipseg_info }}</a>
 	                </td>
+	                <td>{{ one.report_status }}</td>
+	                <td>{{ one.report_time | default_if_none:"--"}}</td>
 	                <td>
 	                	<button class="btn btn-minier btn-info" onclick="edit({{one.id}})">编辑</button>
 	                	<button class="btn btn-minier btn-info" onclick="del({{one.id}})">删除</button>
-	                	<button class="btn btn-minier btn-info" onclick="report({{one.id}})">上报</button>
+	                	<button class="btn btn-minier btn-info" onclick="report('{{one.cdn_house_id}}')">上报</button>
 	                </td>
 	        {% empty %}
 	            <tr class="info">
@@ -87,6 +91,27 @@
 <script type="text/javascript">
 	function edit(id) {
 	    location.href = '/add_cdn_node_house?id=' + id
+    }
+
+    function report(cdn_house_id) {
+	    var data = new Object()
+		data["cdn_house_id"] = cdn_house_id
+		$.ajax({
+		   type : "POST",
+		   url : "/report_house_info/",
+		   data : data,
+		   dataType : 'json',
+		   success : function(jsons) {
+		       if(jsons.code == "0"){
+		       		location.href = "/cdn_node_house_list"
+		       } else {
+		       	alert(jsons.msg);
+		       }
+		   },
+		   error : function() {
+			  return;
+		   }
+		});
     }
 
     function del(id) {

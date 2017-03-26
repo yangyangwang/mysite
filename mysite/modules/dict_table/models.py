@@ -72,3 +72,30 @@ class ServiceContent(models.Model):
 
 	class Meta:
 	    verbose_name = u"服务内容"
+
+
+class CommandType(models.Model):
+
+	key = models.CharField(u"代码", max_length=10)
+	value = models.CharField(u"名称", max_length=30)
+
+	class Meta:
+	    verbose_name = u"指令类型"
+
+
+class CommandOperateType(models.Model):
+
+	key = models.CharField(u"代码", max_length=10)
+	value = models.CharField(u"名称", max_length=30)
+
+	class Meta:
+	    verbose_name = u"指令操作类型"
+
+
+class RuleType(models.Model):
+
+	key = models.CharField(u"代码", max_length=10)
+	value = models.CharField(u"名称", max_length=30)
+
+	class Meta:
+	    verbose_name = u"规则类型"

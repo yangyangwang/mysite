@@ -8,6 +8,7 @@ from ..network_manager.models import NetworkManager
 from ..share_part.share_func import *
 from ..dict_table.models import ServiceContent
 from ..dict_table.models import UnitNature, IdType, ReportStatus
+from django.core.paginator import Paginator
 import traceback
 import json
 
@@ -15,14 +16,37 @@ import json
 # Create your views here.
 # 获取客户信息列表
 def customer_info_list(request):
-    ret_list = CustomerInfo.objects.all()
-    if ret_list:
-        for one in ret_list:
-            one.app_service = get_app_service_num(one.id)
-            one.id_type = get_dict_name(one.id_type, IdType)
-            one.unit_nature = get_dict_name(one.unit_nature, UnitNature)
-            one.network_people = get_name_byid_table(int(one.network_people), NetworkManager).name
-            one.status = get_dict_name(one.status, ReportStatus)
+    # 按单位名称查询
+    if request.GET.get("unit_name"):
+        unit_name = request.GET.get("unit_name")
+        tmp_list = CustomerInfo.objects.filter(unit_name=unit_name.strip())
+    else:
+        tmp_list = CustomerInfo.objects.all()
+
+    # 每页列表显示的数量，读配置文件获取
+    PAGE_SIZE = 5
+    page_size = PAGE_SIZE
+
+    # 要获取的第几页数据，默认为第一页
+    try:
+        page = int(request.GET.get("page",1))
+        if page < 1:
+            page = 1
+    except ValueError:
+        page = 1
+
+    # 创建分页对象
+    paginator = Paginator(tmp_list, page_size)
+    page_obj = paginator.page(page)
+
+
+    for one in page_obj.object_list:
+        one.app_service = get_app_service_num(one.id)
+        one.id_type = get_dict_name(one.id_type, IdType)
+        one.unit_nature = get_dict_name(one.unit_nature, UnitNature)
+        one.network_people = get_name_byid_table(int(one.network_people), NetworkManager).name
+        one.report_status = get_dict_name(one.report_status, ReportStatus)
+        
     return render_to_response('customer_info_list.html', locals())
 
 
@@ -84,9 +108,6 @@ def add_customer_info(request):
     register_time = request.POST.get('register_time')
     business_unit = request.POST.get('business_unit')
 
-    # 客户下应用服务信息的个数
-    status = "1"
-
     # 从页面取到的数据是字符串类型的
 
     def _update():
@@ -100,7 +121,8 @@ def add_customer_info(request):
                 id_no = id_no,
                 network_people = int(network_people),
                 register_time = register_time,
-                business_unit = int(business_unit)
+                business_unit = int(business_unit),
+                report_status = "3",
             )
         except:
             print(traceback.print_exc())
@@ -110,6 +132,7 @@ def add_customer_info(request):
     def _add():
         try:
             CustomerInfo.objects.create(
+                customer_id = get_auto_16_id(),
                 unit_name = unit_name,
                 unit_address = unit_address,
                 unit_zipcode = unit_zipcode,
@@ -119,7 +142,8 @@ def add_customer_info(request):
                 network_people = int(network_people),
                 register_time = register_time,
                 business_unit = int(business_unit),
-                status = status
+                report_status = "1",
+                report_time = "--"
             )
         except:
             print(traceback.print_exc())
@@ -138,6 +162,17 @@ def del_customer_info(request):
 
     tmp_id = request.POST.get("id")
     try:
+        # 删除客户信息时先删除客户的服务下的域名，再删服务，再删客户
+        service_info = AppServiceInfo.objects.filter(customer_id_id=tmp_id)
+        
+        # 删除每个服务下的域名信息
+        for one in service_info:
+            DomainInfo.objects.filter(app_service_id_id=one.id).delete()
+
+        # 删除服务
+        AppServiceInfo.objects.filter(customer_id_id=tmp_id)
+
+        # 删除客户
         CustomerInfo.objects.filter(id=tmp_id).delete()
     except:
         print(traceback.print_exc())
@@ -242,7 +277,8 @@ def add_app_service(request):
     def _update():
         try:
             AppServiceInfo.objects.filter(id=tmp_id).update(
-                service_content = service_content
+                service_content = service_content,
+                report_status = "3"
             )
         except:
             print(traceback.print_exc())
@@ -254,7 +290,9 @@ def add_app_service(request):
             AppServiceInfo.objects.create(
                 service_id = get_auto_16_id(),
                 service_content = json.dumps(service_content),
-                customer_id_id = customer_id
+                customer_id_id = customer_id,
+                report_status = "1",
+                report_time = "--"
             )
         except:
             print(traceback.print_exc())
@@ -332,7 +370,8 @@ def add_domain_info(request):
                 domain = domain,
                 source_address = source_address,
                 record_num = record_num,
-                top_domain = top_domain
+                top_domain = top_domain,
+                report_status = "3"
             )
         except:
             print(traceback.print_exc())
@@ -347,7 +386,9 @@ def add_domain_info(request):
                 source_address = source_address,
                 record_num = record_num,
                 top_domain = top_domain,
-                app_service_id_id = int(app_service_id)
+                app_service_id_id = int(app_service_id),
+                report_status = "1",
+                report_time = "--"
             )
         except:
             print(traceback.print_exc())

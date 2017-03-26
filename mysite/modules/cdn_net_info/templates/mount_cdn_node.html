@@ -1,0 +1,204 @@
+{% extends "base/base.html" %}
+
+{% block css %}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="icon-home home-icon"></i>
+        <a href="#">资源信息</a>
+    </li>
+    <li class="active">CDN子网信息</li>
+{% endblock %}
+
+{% block page_content %}
+
+<div>
+    &nbsp;
+</div>
+
+<div>
+    <div class="col-xs-12" style="padding-top: 2px;">
+        <h4>所属CDN子网编号：{{cdn_net_id}}</h4> 
+    </div>
+    <input type="text" name="cdn_net_id" id="cdn_net_id" value="{{cdn_net_id}}" hidden="hidden">
+    <div class="col-xs-12" style="padding-top: 10px;">
+        <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th><input id="node" onclick="checkedAll('node')" name="node" type="checkbox" value=""/></th>
+                <th class="center">节点编号</th>
+                <th class="center">节点名称</th>
+                <th class="center">挂载的CDN机房</th>
+                <th class="center">上报状态</th>
+                <th class="center">上报时间</th>
+                <th class="center">创建时间</th>
+                <th class="center">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for one in cdn_node_list %}
+                <tr class="center">
+                    <td><input name="node"
+                    {% if one.cdn_node_id in mount_node_list %} checked="checked" {% endif %}
+                     onclick="checkedParent('node', {{length}})" type="checkbox" value="{{one.cdn_node_id}}"/></td>
+                    <td>{{ one.cdn_node_id }}</td>
+                    <td>{{ one.cdn_node_name }}</td>
+                    <td>
+                      <a href="/mount_cdn_house?cdn_node_id=+{{one.cdn_node_id}}+&cdn_net_id=+{{cdn_net_id}}" onclick="">{{ one.mount_house }}</a>  
+                    </td>
+                    <td>{{ one.mount_report_status }}</td>
+                    <td>{{ one.mount_report_time }}</td>
+                    <td>{{ one.mount_create_time }}</td>
+                    <td>
+                        <button class="btn btn-minier btn-info" onclick="logout('{{one.cdn_node_id}}')">注销</button>
+                        <button class="btn btn-minier btn-info" onclick="report('{{one.cdn_node_id}}')">上报</button>
+                    </td>
+            {% empty %}
+                <tr class="info">
+                    <td colspan="10">
+                    <big>
+                    <strong>抱歉，目前没有数据信息。</strong>
+                    </big>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        </div>
+        </table>
+    </div>
+
+    <div class="col-xs-12" style="padding-top: 1px;">
+        <button class="btn btn-info btn-sm" id="gritter-center" 
+            onclick="save()">
+            保存
+        </button>
+        &nbsp;&nbsp;
+        <button class="btn btn-info btn-sm" id="gritter-center" 
+            onclick="javascript:history.back()">
+            取消
+        </button>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+    function save() {
+        var data = new Object();
+        var chk_value =[]; 
+        $('input[name="node"]:checked').each(function(){ 
+           chk_value.push($(this).val());    
+        });
+        data["cdn_node_id_list"] = JSON.stringify(chk_value)
+        data["cdn_net_id"] = $("#cdn_net_id").val()
+        $.ajax({
+           type : "POST",
+           url : "/save_mount_cdn_node/",
+           data : data,
+           dataType : 'json',
+           success : function(jsons) {
+               if(jsons.code == "0"){
+                    location.href = "/cdn_net_list"
+               } else {
+                alert(jsons.msg);
+               }
+           },
+           error : function() {
+              return;
+           }
+        });
+
+    }
+
+    function logout(cdn_node_id) {
+        var data = new Object()
+        data["cdn_node_id"] = cdn_node_id
+        data["cdn_net_id"] = $("#cdn_net_id").val()
+        data["flag"] = "node"
+        $.ajax({
+           type : "POST",
+           url : "/logout_cdn_net/",
+           data : data,
+           dataType : 'json',
+           success : function(jsons) {
+               if(jsons.code == "0"){
+                    alert(jsons.msg)
+                    location.href = "/cdn_net_list"
+               } else {
+                alert(jsons.msg);
+               }
+           },
+           error : function() {
+              return;
+           }
+        });
+    }
+
+    function report(cdn_node_id) {
+        var data = new Object()
+        data["cdn_node_id"] = cdn_node_id
+        data["cdn_net_id"] = $("#cdn_net_id").val()
+        $.ajax({
+           type : "POST",
+           url : "/report_mount_cdn_node/",
+           data : data,
+           dataType : 'json',
+           success : function(jsons) {
+               if(jsons.code == "0"){
+                    alert(jsons.msg)
+                    location.href = "/cdn_net_list"
+               } else {
+                alert(jsons.msg);
+               }
+           },
+           error : function() {
+              return;
+           }
+        });
+    }
+
+    function del(id) {
+        var data = new Object()
+        data["id"] = id
+        $.ajax({
+           type : "POST",
+           url : "/del_cdn_node_house/",
+           data : data,
+           dataType : 'json',
+           success : function(jsons) {
+               if(jsons.code == "0"){
+                    location.href = "/cdn_node_house_list"
+               } else {
+                alert(jsons.msg);
+               }
+           },
+           error : function() {
+              return;
+           }
+        });
+    }
+
+    function checkedAll(index) {
+        $("input[type=checkbox][name="+index+"]").each(function(){
+            $(this).prop("checked", $("#"+index).prop("checked"));
+        });
+    }
+
+    //子节点全部选中时，父节点自动选中
+    function checkedParent(index,max) {
+        var content_checked = 0;
+        $("input[type=checkbox][name="+index+"]").each(function(){
+            if($(this).prop("checked")){
+                content_checked ++;
+            }
+        });
+        if(content_checked == max) {
+            $("#"+index).prop("checked", true);
+        } else {
+            $("#"+index).prop("checked", false);
+        }
+    }
+</script>
+{% endblock %}

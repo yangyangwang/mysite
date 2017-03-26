@@ -1,0 +1,207 @@
+{% extends "base/base.html" %}
+
+{% block css %}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="icon-home home-icon"></i>
+        <a href="#">资源信息</a>
+    </li>
+    <li class="active">CDN节点信息</li>
+{% endblock %}
+
+{% block page_content %}
+
+<div>
+    &nbsp;
+</div>
+
+<div>
+    <div class="col-xs-12" style="padding-top: 2px;">
+        {% ifnotequal cdn_net_id  "0" %}
+            <h4>所属CDN子网编号：{{cdn_net_id}}</h4> 
+        {% endifnotequal %}
+        <h4>所属CDN节点名称：{{cdn_node_name}}</h4> 
+        <h4>所属CDN节点编号：{{cdn_node_id}}</h4> 
+    </div>
+    <input type="text" name="cdn_node_id" id="cdn_node_id" value="{{cdn_node_id}}" hidden="hidden">
+    <input type="text" name="cdn_net_id" id="cdn_net_id" value="{{cdn_net_id}}" hidden="hidden">
+    <div class="col-xs-12" style="padding-top: 10px;">
+        <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th><input id="house" onclick="checkedAll('house')" name="house" type="checkbox" value=""/></th>
+                <th class="center">机房编号</th>
+                <th class="center">机房名称</th>
+                <th class="center">机房属性</th>
+                <th class="center">所属经营者单位</th>
+                <th class="center">负责人信息</th>
+                <th class="center">链路信息</th>
+                <th class="center">机架信息</th>
+                <th class="center">IP地址段信息</th>
+
+                {% ifnotequal cdn_net_id  "0" %}
+                <th class="center">上报标志</th>
+                <th class="center">上报时间</th>
+                <th class="center">操作</th>
+                {% endifnotequal %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for one in cdn_house_list %}
+                <tr class="center">
+                    <td><input name="house"
+                    {% if one.cdn_house_id in mount_house_list %} checked="checked" {% endif %}
+                     onclick="checkedParent('house', {{length}})" type="checkbox" value="{{one.cdn_house_id}}"/></td>
+                    <td>{{ one.cdn_house_id }}</td>
+                    <td>{{ one.cdn_house_name }}</td>
+                    <td>{{ one.cdn_house_nature }}</td>
+                    <td>{{ one.business_unit }}</td>
+                    <td>{{ one.network_people }}</td>
+                    <td>
+                        <a href="/house_link_list?id=+{{one.id}}">{{ one.link_info }}</a>           
+                    </td>
+                    <td>
+                        <a href="/house_frame_list?id=+{{one.id}}">{{ one.frame_info }}</a>
+                    </td>
+                    <td>
+                        <a href="/house_ipseg_list?id=+{{one.id}}">{{ one.ipseg_info }}</a>
+                    </td>
+                    {% ifnotequal cdn_net_id  "0" %}
+                        <td>{{ one.mount_report_status }}</td>
+                        <td>{{ one.mount_report_time }}</td>
+                        <td>
+                            <button class="btn btn-minier btn-info" onclick="logout('{{one.cdn_house_id}}')">注销</button>
+                        </td>
+                    {% endifnotequal %}
+            {% empty %}
+                <tr class="info">
+                    <td colspan="10">
+                    <big>
+                    <strong>抱歉，目前没有数据信息。</strong>
+                    </big>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        </div>
+        </table>
+    </div>
+    {% ifequal cdn_net_id  "0" %}
+        <div class="col-xs-12" style="padding-top: 1px;">
+            <button class="btn btn-info btn-sm" id="gritter-center" 
+                onclick="save()">
+                保存
+            </button>
+            &nbsp;&nbsp;
+            <button class="btn btn-info btn-sm" id="gritter-center" 
+                onclick="javascript:history.back()">
+                取消
+            </button>
+        </div>
+    {% endifequal %}
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+    function edit(id) {
+        location.href = '/add_cdn_node_house?id=' + id
+    }
+
+    function save() {
+        var data = new Object();
+        var chk_value =[]; 
+        $('input[name="house"]:checked').each(function(){ 
+           chk_value.push($(this).val());    
+        });
+        data["cdn_house_id_list"] = JSON.stringify(chk_value)
+        data["cdn_node_id"] = $("#cdn_node_id").val()
+        $.ajax({
+           type : "POST",
+           url : "/save_mount_cdn_house/",
+           data : data,
+           dataType : 'json',
+           success : function(jsons) {
+               if(jsons.code == "0"){
+                    location.href = "/cdn_node_list"
+               } else {
+                alert(jsons.msg);
+               }
+           },
+           error : function() {
+              return;
+           }
+        });
+    }
+
+    function logout(cdn_house_id) {
+        var data = new Object()
+        data["cdn_house_id"] = cdn_house_id
+        data["cdn_net_id"] = $("#cdn_net_id").val()
+        data["cdn_node_id"] = $("#cdn_node_id").val()
+        data["flag"] = "house"
+        $.ajax({
+           type : "POST",
+           url : "/logout_cdn_net/",
+           data : data,
+           dataType : 'json',
+           success : function(jsons) {
+               if(jsons.code == "0"){
+                    alert(jsons.msg)
+                    location.href = "/cdn_net_list"
+               } else {
+                alert(jsons.msg);
+               }
+           },
+           error : function() {
+              return;
+           }
+        });
+    }
+
+    function del(id) {
+        var data = new Object()
+        data["id"] = id
+        $.ajax({
+           type : "POST",
+           url : "/del_cdn_node_house/",
+           data : data,
+           dataType : 'json',
+           success : function(jsons) {
+               if(jsons.code == "0"){
+                    location.href = "/cdn_node_house_list"
+               } else {
+                alert(jsons.msg);
+               }
+           },
+           error : function() {
+              return;
+           }
+        });
+    }
+
+    function checkedAll(index) {
+        $("input[type=checkbox][name="+index+"]").each(function(){
+            $(this).prop("checked", $("#"+index).prop("checked"));
+        });
+    }
+
+    //子节点全部选中时，父节点自动选中
+    function checkedParent(index,max) {
+        var content_checked = 0;
+        $("input[type=checkbox][name="+index+"]").each(function(){
+            if($(this).prop("checked")){
+                content_checked ++;
+            }
+        });
+        if(content_checked == max) {
+            $("#"+index).prop("checked", true);
+        } else {
+            $("#"+index).prop("checked", false);
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends "base/base.html" %}
+
+{% block css %}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="icon-home home-icon"></i>
+        <a href="#">指令管理</a>
+    </li>
+    <li class="active">基础数据监测</li> 
+{% endblock %}
+
+{% block page_content %}
+
+<div class="col-sm-12">
+    <div class="widget-box">
+        <div class="widget-header">
+            <h4 class="smaller">控制台</h4>
+        </div>
+
+        <div class="widget-body">
+            <div class="widget-main">
+                节点: &nbsp;
+                <input type="text" name="node_name" id="node_name" value="{{node_name}}">
+
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <button class="btn btn-info btn-sm" id="gritter-center" 
+                    onclick="_query()">
+                    查询
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div>
+    <div class="col-xs-12" style="padding-top: 10px;">
+        <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th class="center">序号</th>
+                <th class="center">IP</th>
+                <th class="center">端口</th>
+                <th class="center">域名</th>
+                <th class="center">登记域名</th>
+                <th class="center">登记异常</th>
+                <th class="center">服务内容</th>
+                <th class="center">首次发现时间</th>
+                <th class="center">最后一次发现时间</th>
+                <th class="center">累计访问量</th>
+                <th class="center">协议类</th>
+                <th class="center">违法违规情况</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for one in page_obj.object_list %}
+                <tr class="center">
+                    <td>{{ forloop.counter }} </td>
+                    <td>{{ one.ip }}</td>
+                    <td>{{ one.port }}</td>
+                    <td>{{ one.domain }}</td>
+                    <td>{{ one.register_domain }}</td>
+                    <td>{{ one.register_exception }}</td>
+                    <td>{{ one.service_content }}</td>
+                    <td>{{ one.first_time }}</td>
+                    <td>{{ one.end_time }}</td>
+                    <td>{{ one.visit_count }}</td>
+                    <td>{{ one.protocol }}</td>
+                    <td>{{ one.illegal_condition }}</td>
+            {% empty %}
+                <tr class="info">
+                    <td colspan="12">
+                    <big>
+                    <strong>抱歉，目前没有数据信息。</strong>
+                    </big>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+
+        {% include  "base/paginator.html" %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+    function _query() {
+        var unit_name = $("#unit_name").val()
+        location.href = '/access_log_list/?node_name=' + node_name
+    }
+</script>
+{% endblock %}

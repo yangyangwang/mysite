@@ -1,0 +1,102 @@
+{% extends "base/base.html" %}
+
+{% block css %}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="icon-home home-icon"></i>
+        <a href="#">日志管理</a>
+    </li>
+    <li class="active">访问日志</li>
+{% endblock %}
+
+{% block page_content %}
+
+<div class="col-sm-12">
+    <div class="widget-box">
+        <div class="widget-header">
+            <h4 class="smaller">控制台</h4>
+        </div>
+
+        <div class="widget-body">
+            <div class="widget-main">
+                节点: &nbsp;
+                <input type="text" name="node_name" id="node_name" value="{{node_name}}">
+
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <button class="btn btn-info btn-sm" id="gritter-center" 
+                    onclick="_query()">
+                    查询
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div>
+    <div class="col-xs-12" style="padding-top: 10px;">
+        <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th class="center">序号</th>
+                <th class="center">监测指令ID</th>
+                <th class="center">源IP</th>
+                <th class="center">目的IP</th>
+                <th class="center">源端口</th>
+                <th class="center">目的端口</th>
+                <th class="center">域名</th>
+                <th class="center">URL</th>
+                <th class="center">累计访问量</th>
+                <th class="center">代理类型</th>
+                <th class="center">代理IP</th>
+                <th class="center">代理端口</th>
+                <th class="center">指令来源</th>
+                <th class="center">访问时间</th>
+                <th class="center">关键词快照</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for one in page_obj.object_list %}
+                <tr class="center">
+                    <td>{{ forloop.counter }} </td>
+                    <td>{{ one.command_id }}</td>
+                    <td>{{ one.src_ip }}</td>
+                    <td>{{ one.dest_ip }}</td>
+                    <td>{{ one.src_port }}</td>
+                    <td>{{ one.dest_port }}</td>
+                    <td>{{ one.domain }}</td>
+                    <td>{{ one.url }}</td>
+                    <td>{{ one.access_num }}</td>
+                    <td>{{ one.agent_type }}</td>
+                    <td>{{ one.agent_ip }}</td>
+                    <td>{{ one.command_origin }}</td>
+                    <td>{{ one.access_time }}</td>
+                    <td>{{ one.keyword_pic }}</td>
+            {% empty %}
+                <tr class="info">
+                    <td colspan="15">
+                    <big>
+                    <strong>抱歉，目前没有数据信息。</strong>
+                    </big>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+
+        {% include  "base/paginator.html" %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+    function _query() {
+        var node_name = $("#node_name").val()
+        location.href = '/monitor_log_list/?node_name=' + node_name
+    }
+</script>
+{% endblock %}

@@ -68,6 +68,36 @@ ReportStatusMap = {
 	"4": u"更新已上报"
 }
 
+
+# 指令类型
+CommandTypeMap = {
+	"1": u"违法信息监测指令",
+	"2": u"违法信息过滤指令",
+	"3": u"免过滤网站列表指令",
+	"4": u"违法网站列表指令"
+}
+
+
+# 指令操作类型
+CommandOperateTypeMap = {
+	"1": u"新增",
+	"2": u"删除"
+}
+
+
+# 规则类型
+RuleTypeMap = {
+	"1": u"域名",
+	"2": u"URL",
+	"3": u"关键字",
+	"4": u"源IP地址",
+	"5": u"目的IP地址",
+	"6": u"源端口",
+	"7": u"目的端口",
+	"8": u"传输层协议",
+	"99": u"IP域名"
+}
+
 # 服务内容
 ServiceContentMap = [
 	("500", "/", u"基础应用"),
@@ -110,7 +140,10 @@ map_list = [
 	(IpUseTypeMap, IpUseType),
 	(FrameUseTypeMap, FrameUseType),
 	(LinkTypeMap, LinkType),
-	(ReportStatusMap, ReportStatus)
+	(ReportStatusMap, ReportStatus),
+	(CommandTypeMap, CommandType),
+	(CommandOperateTypeMap, CommandOperateType),
+	(RuleTypeMap, RuleType)
 ]
 
 

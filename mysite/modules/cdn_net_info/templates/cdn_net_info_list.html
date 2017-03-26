@@ -34,8 +34,10 @@
 			<tr>
 				<th class="center">序号</th>
 				<th class="center">CDN子网编号</th>
-                <th class="center">顶级域名</th>
+                <th class="center">子网顶级域名</th>
                 <th class="center">顶级域名备案号</th>
+                <th class="center">挂载的CDN节点</th>
+                <th class="center">挂载的加速域名</th>
                 <th class="center">上报状态</th>
                 <th class="center">上报时间</th>
                 <th class="center">操作</th>
@@ -48,12 +50,21 @@
 	                <td>{{ one.cdn_net_id }}</td>
 	                <td>{{ one.cdn_top_domain }}</td>
 	                <td>{{ one.top_domain_record_num }}</td>
+	                <td>
+	                	<a href="/mount_cdn_node?cdn_net_id=+{{one.cdn_net_id}}" onclick="">{{ one.mount_node }}</a>	 
+	                </td>
+	                <td>
+	                	<a href="/mount_cdn_domain?cdn_net_id=+{{one.cdn_net_id}}" onclick="">{{ one.mount_domain }}</a>	 
+	                </td>
 	                <td>{{ one.report_status }}</td>
 	                <td>{{ one.report_time | default_if_none:"--" }}</td>
 	                <td>
 	                	<button class="btn btn-minier btn-info" onclick="edit({{one.id}})">编辑</button>
 	                	<button class="btn btn-minier btn-info" onclick="del({{one.id}})">删除</button>
+	                	<button class="btn btn-minier btn-info" onclick="mount_cdn_node('{{one.cdn_net_id}}')">挂载CDN节点</button>
+	                	<button class="btn btn-minier btn-info" onclick="mount_cdn_domain('{{one.cdn_net_id}}')">挂载加速域名</button>
 	                	<button class="btn btn-minier btn-info" onclick="report({{one.id}})">上报</button>
+	                	<button class="btn btn-minier btn-info" onclick="logout('{{one.cdn_net_id}}')">注销</button>
 	                </td>
 	        {% empty %}
 	            <tr class="info">
@@ -76,6 +87,59 @@
 	function edit(id) {
 	    location.href = '/add_cdn_net?id=' + id
     }
+
+    function mount_cdn_node(cdn_net_id) {
+	    location.href = '/mount_cdn_node?cdn_net_id=' + cdn_net_id
+    }
+    function mount_cdn_domain(cdn_net_id) {
+	    location.href = '/mount_cdn_domain?cdn_net_id=' + cdn_net_id
+    }
+
+    function logout(cdn_net_id) {
+        var data = new Object()
+        data["cdn_net_id"] = cdn_net_id
+        data["flag"] = "net"
+        $.ajax({
+           type : "POST",
+           url : "/logout_cdn_net/",
+           data : data,
+           dataType : 'json',
+           success : function(jsons) {
+               if(jsons.code == "0"){
+                    alert(jsons.msg)
+                    location.href = "/cdn_net_list"
+               } else {
+                alert(jsons.msg);
+               }
+           },
+           error : function() {
+              return;
+           }
+        });
+    }
+
+    function report(id) {
+        var data = new Object()
+        data["id"] = id
+        $.ajax({
+           type : "POST",
+           url : "/report_cdn_net/",
+           data : data,
+           dataType : 'json',
+           success : function(jsons) {
+               if(jsons.code == "0"){
+                    alert(jsons.msg)
+                    location.href = "/cdn_net_list"
+               } else {
+                alert(jsons.msg);
+               }
+           },
+           error : function() {
+              return;
+           }
+        });
+    }
+
 
     function del(id) {
 	    var data = new Object()

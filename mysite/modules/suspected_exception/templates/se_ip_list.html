@@ -1,0 +1,95 @@
+{% extends "base/base.html" %}
+
+{% block css %}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="icon-home home-icon"></i>
+        <a href="#">疑似与异常信息</a>
+    </li>
+    <li class="active">疑似与异常指令</li>
+{% endblock %}
+
+{% block page_content %}
+
+<div class="col-sm-12">
+    <div class="widget-box">
+        <div class="widget-header">
+            <h4 class="smaller">控制台</h4>
+        </div>
+
+        <div class="widget-body">
+            <div class="widget-main">
+                IP: &nbsp;
+                <input type="text" name="node_name" id="node_name" value="{{node_name}}">
+
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <button class="btn btn-info btn-sm" id="gritter-center" 
+                    onclick="_query()">
+                    查询
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div>
+    <div class="col-xs-12" style="padding-top: 10px;">
+        <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th class="center">序号</th>
+                <th class="center">推送IP编号</th>
+                <th class="center">IP数据</th>
+                <th class="center">推送IP类型</th>
+                <th class="center">发现时间</th>
+                <th class="center">处理状态</th>
+                <th class="center">处理方法</th>
+                <th class="center">处理时间</th>
+                <th class="center">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for one in page_obj.object_list %}
+                <tr class="center">
+                    <td>{{ forloop.counter }} </td>
+                    <td>{{ one.ip_id }}</td>
+                    <td>{{ one.ip_data }}</td>
+                    <td>{{ one.ip_type }}</td>
+                    <td>{{ one.find_time }}</td>
+                    <td>{{ one.access_status }}</td>
+                    <td>{{ one.access_method }}</td>
+                    <td>{{ one.access_time }}</td>
+                    <td>
+                        <button class="btn btn-minier btn-info" onclick="edit({{one.id}})">处理</button>
+                        <button class="btn btn-minier btn-info" onclick="del({{one.id}})">反馈</button>
+                        <button class="btn btn-minier btn-info" onclick="del({{one.id}})">结果</button>
+                    </td>
+            {% empty %}
+                <tr class="info">
+                    <td colspan="8">
+                    <big>
+                    <strong>抱歉，目前没有数据信息。</strong>
+                    </big>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+
+        {% include  "base/paginator.html" %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+    function _query() {
+        var unit_name = $("#unit_name").val()
+        location.href = '/access_log_list/?node_name=' + node_name
+    }
+</script>
+{% endblock %}

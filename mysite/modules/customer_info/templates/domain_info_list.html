@@ -13,17 +13,29 @@
 
 {% block page_content %}
 
-<div>
-	&nbsp;
-</div>
+<div class="col-sm-12">
+	<div class="widget-box">
+		<div class="widget-header">
+			<h4 class="smaller">控制台</h4>
+		</div>
 
+		<div class="widget-body">
+			<div class="widget-main">
+				域名 :&nbsp;
+				<input type="text" name="domain" id="domain" value="{{domain}}">
 
-<div>
-	<div class="col-xs-1">
-		<button class="btn btn-primary" id="gritter-center" 
-			onclick="_add({{app_service_id}})">
-			新增
-		</button>
+				&nbsp;&nbsp;&nbsp;&nbsp;
+				<button class="btn btn-info btn-sm" id="gritter-center" 
+					onclick="_query()">
+					查询
+				</button>
+				&nbsp;&nbsp;
+				<button class="btn btn-info btn-sm" id="gritter-center" 
+					onclick="window.location.href='{% url "add_domain_info" %}'">
+					新增
+				</button>
+			</div>
+		</div>
 	</div>
 </div>
 
@@ -38,11 +50,13 @@
                 <th class="center">源站地址</th>
                 <th class="center">备案号或许可证号</th>
                 <th class="center">顶级域名</th>
+                <th class="center">上报状态</th>
+                <th class="center">上报时间</th>
                 <th class="center">操作</th>
 			</tr>
 		</thead>
 		<tbody>
-			{% for one in ret_list %}
+			{% for one in page_obj.object_list %}
 	    		<tr class="center">
 	                <td>{{ forloop.counter }} </td>
 	                <td>{{ one.domain_id }}</td>
@@ -50,9 +64,24 @@
 	                <td>{{ one.source_address }}</td>
 	                <td>{{ one.record_num }}</td>
 	                <td>{{ one.top_domain }}</td>
+	                <td>{{ one.report_status }}</td>
+	                <td>{{ one.report_time }}</td>
 	                <td>
 	                	<button class="btn btn-minier btn-info" onclick="edit({{one.id}})">编辑</button>
 	                	<button class="btn btn-minier btn-info" onclick="del({{one.id}})">删除</button>
+	                	{% ifequal one.report_status '新增未上报' %}
+	                		<button class="btn btn-minier btn-info" onclick="report({{one.id}})">上报</button>
+	                	{% endifequal %}
+	                	{% ifequal one.report_status '更新未上报'%}
+	                		<button class="btn btn-minier btn-info" onclick="report({{one.id}})">上报</button>
+	                	{% endifequal %}
+
+	                	{% ifequal one.report_status '新增已上报' %}
+	                		<button class="btn btn-minier btn-info" onclick="_post({{one.id}}, '/logout_customer_info/', '/domain_info_list', 'domain')">注销</button>
+	                	{% endifequal %}
+	                	{% ifequal one.report_status '更新已上报'%}
+	                		<button class="btn btn-minier btn-info" onclick="_post({{one.id}}, '/logout_customer_info/', '/domain_info_list', 'domain')">注销</button>
+	                	{% endifequal %}
 	                </td>
 	        {% empty %}
 	            <tr class="info">
@@ -65,6 +94,7 @@
 	        {% endfor %}
 		</tbody>
 		</table>
+		{% include  "base/paginator.html" %}
 	</div>
 </div>
 
@@ -73,6 +103,56 @@
 {% block js %}
 <script type="text/javascript">
 var global_app_service_id = ""
+
+	function _query() {
+		var domain = $("#domain").val()
+		location.href = '/domain_info_list/?domain=' + domain
+	}
+
+	function _post(id, go_url, back_url, flag) {
+    	var data = new Object()
+		data["id"] = id
+		data["flag"] = flag
+		$.ajax({
+		   type : "POST",
+		   url : go_url,
+		   data : data,
+		   dataType : 'json',
+		   success : function(jsons) {
+		       if(jsons.code == "0"){
+		       		alert(jsons.msg)
+		       		location.href = back_url
+		       } else {
+		       	alert(jsons.msg);
+		       }
+		   },
+		   error : function() {
+			  return;
+		   }
+		});
+    }
+
+	function report(id) {
+	    var data = new Object()
+		data["id"] = id
+		$.ajax({
+		   type : "POST",
+		   url : "/report_domain_info/",
+		   data : data,
+		   dataType : 'json',
+		   success : function(jsons) {
+		       if(jsons.code == "0"){
+		       		alert(jsons.msg)
+		       		location.href = "/domain_info_list"
+		       } else {
+		       	alert(jsons.msg);
+		       }
+		   },
+		   error : function() {
+			  return;
+		   }
+		});
+    }
 
 	function _add(app_service_id) {
 		if(app_service_id != null){

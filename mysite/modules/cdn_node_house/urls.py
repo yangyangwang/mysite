@@ -1,6 +1,7 @@
 from django.conf.urls import url
 
 from . import views
+from .code import report_house_info
 
 urlpatterns = [
     url(r'^cdn_node_house_list/$', views.cdn_node_house_list, name='cdn_node_house_list'),
@@ -18,5 +19,7 @@ urlpatterns = [
     url(r'^house_ipseg_list/$', views.house_ipseg_list, name='house_ipseg_list'),
     url(r'^add_house_ipseg/$', views.add_house_ipseg, name='add_house_ipseg'),
     url(r'^del_house_ipseg/$', views.del_house_ipseg, name='del_house_ipseg'),
+
+    url(r'^report_house_info/$', report_house_info.report_house_info, name='report_house_info'),
     
 ]

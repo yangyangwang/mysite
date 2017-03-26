@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<basicInfo>
+    <newInfo>
+        <cdnId>1</cdnId>
+        <customerInfo>
+            <customerId>rlDBddGrV0LIW3va</customerId>
+            <serviceInfo>
+                <serviceId>TgZEI6NEqlMWNpyL</serviceId>
+                <serviceContent>5</serviceContent>
+                <domainInfo>
+                    <domainId>a8ImPfpdwMINTcbk</domainId>
+                    <domain>1</domain>
+                    <source>1</source>
+                    <regId>1</regId>
+                    <topDomain>1</topDomain>
+                </domainInfo>
+            </serviceInfo>
+        </customerInfo>
+    </newInfo>
+    <timeStamp>2017-03-22 03:22:47</timeStamp>
+</basicInfo>

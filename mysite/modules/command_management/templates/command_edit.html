@@ -1,0 +1,330 @@
+{% extends "base/base.html" %}
+
+{% block css %}
+<link rel="stylesheet" href="/static/assets/css/chosen.css" />
+<link rel="stylesheet" href="/static/assets/css/jquery-ui-1.10.3.custom.min.css" />
+<link rel="stylesheet" href="/static/assets/css/chosen.css" />
+<link rel="stylesheet" href="/static/assets/css/datepicker.css" />
+<link rel="stylesheet" href="/static/assets/css/bootstrap-timepicker.css" />
+<link rel="stylesheet" href="/static/assets/css/daterangepicker.css" />
+<link rel="stylesheet" href="/static/assets/css/colorpicker.css" />
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="icon-home home-icon"></i>
+        <a href="#">指令管理</a>
+    </li>
+    <li class="active">管理指令</li>
+{% endblock %}
+
+{% block page_content %}
+<div class="page-content">
+
+    <div class="page-header">
+        <h1>
+            指令信息
+        </h1>
+    </div>
+
+    <div>
+        <div class="col-xs-12">
+            <form class="form-horizontal" role="form" action="{% url 'add_command' %}" method="post">
+                <div class="space-8"></div>
+                <input hidden="hidden" type="text" name="id" value="{{edit_map.id}}"/>
+
+                <div class="col-xs-12">
+                    <div class="col-sm-5">
+                        <div class="form-group">
+                            <label class="col-sm-5 control-label no-padding-right" for="command_id">
+                                管理指令ID
+                            </label>
+
+                            <div class="col-sm-7">
+                                <input type="text" name="command_id" value="{{edit_map.command_id}}" placeholder="" class="col-xs-8 col-sm-7" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-5">
+                        <div class="form-group">
+                            <label class="col-sm-5 control-label no-padding-right" for="command_type">
+                                管理指令类型
+                            </label>
+
+                            <div class="col-sm-7">
+                                <select name="command_type" id="command_type" class="col-xs-8 col-sm-7">
+                                    <option value="{{edit_map.command_type}}" selected="selected">{{edit_map.command_type_name}}</option>
+                                    {% for one in command_type_select %}
+                                        <option value="{{one.key}}">{{one.value}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-4"></div>
+
+                <div class="col-xs-12">
+                    <div class="col-sm-5">
+                        <div class="form-group">
+                            <label class="col-sm-5 control-label no-padding-right" for="effect_time">
+                                生效时间
+                            </label>
+
+                            <div class="col-sm-7">
+                                <input type="text" name="effect_time" value="{{edit_map.effect_time}}" placeholder="" class="col-xs-8 col-sm-7" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-5">
+                        <div class="form-group">
+                            <label class="col-sm-5 control-label no-padding-right" for="deadline">
+                                过期时间
+                            </label>
+
+                            <div class="col-sm-7">
+                                <input type="text" name="deadline" value="{{edit_map.deadline}}" placeholder="" class="col-xs-8 col-sm-7" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-4"></div>
+
+                <div class="col-xs-12">
+                    <div class="col-sm-5">
+                        <div class="form-group">
+                            <label class="col-sm-5 control-label no-padding-right" for="operate_type">
+                                操作类型
+                            </label>
+
+                            <div class="col-sm-7">
+                                <select name="operate_type" id="operate_type" class="col-xs-8 col-sm-7">
+                                    <option value="{{edit_map.operate_type}}" selected="selected">{{edit_map.operate_type_name}}</option>
+                                    {% for one in operate_type_select %}
+                                        <option value="{{one.key}}">{{one.value}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-5">
+                        <div class="form-group">
+                            <label class="col-sm-5 control-label no-padding-right" for="send_user">
+                                下发指令用户名
+                            </label>
+
+                            <div class="col-sm-7">
+                                <input type="text" name="send_user" value="{{edit_map.send_user}}" placeholder="" class="col-xs-8 col-sm-7" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-4"></div>
+
+                <div class="col-xs-12">
+                    <div class="col-sm-5">
+                        <div class="form-group">
+                            <label class="col-sm-5 control-label no-padding-right" for="filter_reason">
+                                过滤原因
+                            </label>
+
+                            <div class="col-sm-7">
+                                <textarea class="form-control" name="filter_reason" id="filter_reason" placeholder="" style="margin: 0px -355.563px 0px 0px; width: 595px; height: 50px;">{{edit_map.filter_reason}}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12">
+                    <div class="col-sm-5">
+                        <div class="form-group">
+                            <label class="col-sm-5 control-label no-padding-right" for="house">
+                                选择机房
+                            </label>
+
+                            <div class="col-sm-7">
+                                {% for one in house_list %}
+                                    <div class="control-group">
+                                        <label class="control-label bolder blue">
+                                        <input name="house" value="{{one.id}}" type="checkbox" 
+                                        {% if one.id in edit_map.house %} checked="checked" {% endif %}
+                                        class="ace"/>
+                                                <span class="lbl">{{one.cdn_house_name}}</span>
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="space-4"></div>
+
+                <div class="col-xs-12">
+                    <div class="col-sm-5">
+                        <div class="form-group">
+                            <label class="col-sm-5 control-label no-padding-right" for="is_write_log">
+                                是否记录日志
+                            </label>
+                            <div class="col-sm-7">
+                                <input type="checkbox" name="is_write_log" 
+                                {% ifequal edit_map.is_write_log '1'%} checked="checked" {% endifequal %}
+                                 class="col-xs-8 col-sm-7 ace">
+                                <span class="lbl"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-5">
+                        <div class="form-group">
+                            <label class="col-sm-5 control-label no-padding-right" for="is_report">
+                                是否进行上报
+                            </label>
+                            <div class="col-sm-7">
+                                <input type="checkbox" name="is_report"
+                                {% ifequal edit_map.is_report '1'%} checked="checked" {% endifequal %}
+                                class="col-xs-8 col-sm-7 ace" >
+                                <span class="lbl"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-4"></div>
+
+                <div class="page-header">
+                    <h1>
+                        规则信息
+                    </h1>
+                </div>
+
+                <div class="col-xs-12">
+                    <div class="col-sm-5">
+                        <div class="form-group">
+                            <label class="col-sm-5 control-label no-padding-right" for="rule_type">
+                                规则类型
+                            </label>
+
+                            <div class="col-sm-7">
+                                <select name="rule_type" id="rule_type" class="col-xs-8 col-sm-7">
+                                    <option value="{{edit_map.rule_type}}" selected="selected">{{edit_map.rule_type_name}}</option>
+                                    {% for one in rule_type_select %}
+                                        <option value="{{one.key}}">{{one.value}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-5">
+                        <div class="form-group">
+                            <label class="col-sm-5 control-label no-padding-right" for="rule_start_value">
+                                规则内容起始值
+                            </label>
+
+                            <div class="col-sm-7">
+                                <input type="text" name="rule_start_value" value="{{edit_map.rule_start_value}}" placeholder="" class="col-xs-8 col-sm-7" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-4"></div>
+
+                <div class="col-xs-12">
+                    <div class="col-sm-5">
+                        <div class="form-group">
+                            <label class="col-sm-5 control-label no-padding-right" for="rule_end_value">
+                                规则内容结束值
+                            </label>
+
+                            <div class="col-sm-7">
+                                <input type="text" name="rule_end_value" value="{{edit_map.rule_end_value}}" placeholder="" class="col-xs-8 col-sm-7" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-5">
+                        <div class="form-group">
+                            <label class="col-sm-5 control-label no-padding-right" for="keyword">
+                                关键词匹配范围
+                            </label>
+
+                            <div class="col-sm-7">
+                                <div class="form-group">
+                                    <label class="col-sm-5 control-label no-padding-right" for="">
+                                        正文标题及正文本身
+                                    </label>
+                                    <div class="col-sm-7">
+                                        <input type="checkbox" name="keyword" value="1" 
+                                        {% if '1' in edit_map.keyword %} checked="checked" {% endif %}
+                                        class="col-xs-8 col-sm-7 ace" >
+                                        <span class="lbl"></span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-5 control-label no-padding-right" for="">
+                                        附件标题
+                                    </label>
+                                    <div class="col-sm-7">
+                                        <input type="checkbox" name="keyword" value="2" 
+                                        {% if '2' in edit_map.keyword %} checked="checked" {% endif %}
+                                        class="col-xs-8 col-sm-7 ace" >
+                                        <span class="lbl"></span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-5 control-label no-padding-right" for="">
+                                        附件正文
+                                    </label>
+                                    <div class="col-sm-7">
+                                        <input type="checkbox" name="keyword" value="3"
+                                        {% if '3' in edit_map.keyword %} checked="checked" {% endif %}
+                                         class="col-xs-8 col-sm-7 ace" >
+                                        <span class="lbl"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="space-8"></div>
+                <div class="col-xs-12">
+                    <div class="clearfix form-actions">
+                        <div class="col-md-offset-3 col-md-9">
+                            <button class="btn btn-info" type="submit">
+                                <i class="icon-ok bigger-110"></i>
+                                保存
+                            </button>
+
+                            &nbsp; &nbsp; &nbsp;
+                            <button class="btn" type="reset" onclick="javascript:history.back()">
+                                <i class="icon-undo bigger-110"></i>
+                                取消
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+
+</script>
+{% endblock %}

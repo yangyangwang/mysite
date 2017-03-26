@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<basicInfo>
+    <newInfo>
+        <cdnId>BJ-website-wyy</cdnId>
+        <cdnNetInfo>
+            <cdnNetId>LW9wL6gsW1k15wbL</cdnNetId>
+            <node>
+                <nodeId>kr5Fbc7VC5F7eVhL</nodeId>
+                <nodeName>node002</nodeName>
+                <houseInfo>
+                    <houseId>kr5Fbc7VC5F7eVhL</houseId>
+                    <houseName>上行机房</houseName>
+                    <houseType>2</houseType>
+                    <houseProvince>复旦</houseProvince>
+                    <houseCity>反倒是</houseCity>
+                    <houseCounty>反倒是</houseCounty>
+                    <houseAdd>规划梵蒂冈</houseAdd>
+                    <houseZip>100000</houseZip>
+                    <venderName>金山云</venderName>
+                    <gatewayInfo>
+                        <id>4</id>
+                        <bandWidth>50</bandWidth>
+                        <linkType>2</linkType>
+                        <linkTime>2014-08</linkTime>
+                    </gatewayInfo>
+                    <frameInfo>
+                        <id>4</id>
+                        <useType>2</useType>
+                        <frameName>范德萨范德萨</frameName>
+                    </frameInfo>
+                    <ipSegInfo>
+                        <id>4</id>
+                        <startIp>2.2.2.25</startIp>
+                        <endIp>2.2.2.78</endIp>
+                        <type>1</type>
+                    </ipSegInfo>
+                </houseInfo>
+            </node>
+        </cdnNetInfo>
+    </newInfo>
+    <timeStamp>2017-03-26 03:28:12</timeStamp>
+</basicInfo>

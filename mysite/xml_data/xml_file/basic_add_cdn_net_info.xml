@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<basicInfo>
+    <newInfo>
+        <cdnId>BJ-website-wyy</cdnId>
+        <cdnNetInfo>
+            <cdnNetId>LW9wL6gsW1k15wbL</cdnNetId>
+            <topDomain>test.com</topDomain>
+            <regId>423sf</regId>
+            <node>
+                <nodeId>K8x32qgsV6JYRbMk</nodeId>
+                <nodeName>node001</nodeName>
+                <houseInfo>
+                    <houseId>K8x32qgsV6JYRbMk</houseId>
+                    <houseName>北京机房</houseName>
+                    <houseType>2</houseType>
+                    <houseProvince>北京</houseProvince>
+                    <houseCity>北京</houseCity>
+                    <houseCounty>北京</houseCounty>
+                    <houseAdd>上地</houseAdd>
+                    <houseZip>100000</houseZip>
+                    <venderName>金山云</venderName>
+                    <gatewayInfo>
+                        <id>3</id>
+                        <bandWidth>20</bandWidth>
+                        <linkType>3</linkType>
+                        <linkTime>2014-08</linkTime>
+                    </gatewayInfo>
+                    <frameInfo>
+                        <id>3</id>
+                        <useType>2</useType>
+                        <frameName>佛挡杀佛</frameName>
+                    </frameInfo>
+                    <ipSegInfo>
+                        <id>3</id>
+                        <startIp>2.2.2.2</startIp>
+                        <endIp>2.2.2.101</endIp>
+                        <type>0</type>
+                    </ipSegInfo>
+                </houseInfo>
+            </node>
+            <domainId>6SPVcKuXawHfo4EP</domainId>
+        </cdnNetInfo>
+    </newInfo>
+    <timeStamp>2017-03-26 02:20:47</timeStamp>
+</basicInfo>

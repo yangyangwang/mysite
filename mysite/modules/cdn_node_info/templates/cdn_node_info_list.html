@@ -35,6 +35,7 @@
 				<th class="center">序号</th>
 				<th class="center">CDN节点编号</th>
                 <th class="center">CDN节点名称</th>
+                <th class="center">挂载CDN机房个数</th>
                 <th class="center">上报状态</th>
                 <th class="center">上报时间</th>
                 <th class="center">操作</th>
@@ -46,16 +47,20 @@
 	                <td>{{ forloop.counter }} </td>
 	                <td>{{ one.cdn_node_id }}</td>
 	                <td>{{ one.cdn_node_name }}</td>
+	                <td>
+	                	<a href="/mount_cdn_house?cdn_node_id=+{{one.cdn_node_id}}" onclick="">{{ one.house_count }}</a>	 
+	                </td>
 	                <td>{{ one.report_status }}</td>
 	                <td>{{ one.report_time | default_if_none:"--" }}</td>
 	                <td>
 	                	<button class="btn btn-minier btn-info" onclick="edit({{one.id}})">编辑</button>
 	                	<button class="btn btn-minier btn-info" onclick="del({{one.id}})">删除</button>
-	                	<button class="btn btn-minier btn-info" onclick="report({{one.id}})">上报</button>
+	                	<button class="btn btn-minier btn-info" onclick="mount_cdn_house('{{one.cdn_node_id}}')">挂载CDN机房</button>
+	                	<button class="btn btn-minier btn-info" onclick="report('{{one.cdn_node_id}}')">上报</button>
 	                </td>
 	        {% empty %}
 	            <tr class="info">
-	                <td colspan="10">
+	                <td colspan="7">
 	                <big>
 	                <strong>抱歉，目前没有数据信息。</strong>
 	                </big>
@@ -74,6 +79,33 @@
 	function edit(id) {
 	    location.href = '/add_cdn_node?id=' + id
     }
+
+    function mount_cdn_house(cdn_node_id) {
+	    location.href = '/mount_cdn_house?cdn_node_id=' + cdn_node_id
+    }
+
+    function report(cdn_node_id) {
+        var data = new Object()
+        data["cdn_node_id"] = cdn_node_id
+        $.ajax({
+           type : "POST",
+           url : "/report_cdn_node/",
+           data : data,
+           dataType : 'json',
+           success : function(jsons) {
+               if(jsons.code == "0"){
+                    alert(jsons.msg)
+                    location.href = "/cdn_node_list"
+               } else {
+                alert(jsons.msg);
+               }
+           },
+           error : function() {
+              return;
+           }
+        });
+    }
+
 
     function del(id) {
 	    var data = new Object()

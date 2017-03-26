@@ -13,19 +13,35 @@
 
 {% block page_content %}
 
-<div>
-	&nbsp;
-</div>
+<div class="col-sm-12">
+	<div class="widget-box">
+		<div class="widget-header">
+			<h4 class="smaller">控制台</h4>
+		</div>
 
+		<div class="widget-body">
+			<div class="widget-main">
+				单位名称: &nbsp;
+				<input type="text" name="unit_name" id="unit_name" value="{{unit_name}}">
 
-<div>
-	<div class="col-xs-1">
-		<button class="btn btn-primary" id="gritter-center" 
-			onclick="window.location.href='{% url "add_business_unit" %}'">
-			新增
-		</button>
+				&nbsp;&nbsp;&nbsp;&nbsp;
+				<button class="btn btn-info btn-sm" id="gritter-center" 
+					onclick="_query()">
+					查询
+				</button>
+				&nbsp;&nbsp;
+				<button class="btn btn-info btn-sm" id="gritter-center" 
+					onclick="window.location.href='{% url "add_business_unit" %}'">
+					新增
+				</button>
+			</div>
+		</div>
 	</div>
 </div>
+
+
+
+
 
 <div>
 	<div class="col-xs-12" style="padding-top: 10px;">
@@ -46,7 +62,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{% for one in ret_list %}
+			{% for one in page_obj.object_list %}
 	    		<tr class="center">
 	                <td>{{ forloop.counter }} </td>
 	                <td>{{ one.unit_licence }}</td>
@@ -56,15 +72,27 @@
 	                <td>{{ one.unit_faren }}</td>
 	                <td>{{ one.netinfo_people }}</td>
 	                <td>{{ one.emergency_people }}</td>
-	                <td>{{ one.status | default_if_none:"" }}</td>
-	                <td>{{ one.time | default_if_none:"" }}</td>
+	                <td>{{ one.status | default_if_none:"--" }}</td>
+	                <td>{{ one.time | default_if_none:"--" }}</td>
 	                <td>
 	                	<button class="btn btn-minier btn-info" onclick="edit({{one.id}})">编辑</button>
 	                	<button class="btn btn-minier btn-info" onclick="del({{one.id}})">删除</button>
+	                	{% ifequal one.status '新增未上报' %}
+	                		<button class="btn btn-minier btn-info" onclick="report({{one.id}})">上报</button>
+	                	{% endifequal %}
+	                	{% ifequal one.status '更新未上报'%}
+	                		<button class="btn btn-minier btn-info" onclick="report({{one.id}})">上报</button>
+	                	{% endifequal %}
+	                	{% ifequal one.status '新增已上报' %}
+	                		<button class="btn btn-minier btn-info" onclick="_post({{one.id}}, '/logout_business_unit/', '/business_unit_list')">注销</button>
+	                	{% endifequal %}
+	                	{% ifequal one.status '更新已上报'%}
+	                		<button class="btn btn-minier btn-info" onclick="_post({{one.id}}, '/logout_business_unit/', '/business_unit_list')">注销</button>
+	                	{% endifequal %}
 	                </td>
 	        {% empty %}
 	            <tr class="info">
-	                <td colspan="10">
+	                <td colspan="11">
 	                <big>
 	                <strong>抱歉，目前没有数据信息。</strong>
 	                </big>
@@ -73,6 +101,8 @@
 	        {% endfor %}
 		</tbody>
 		</table>
+
+		{% include  "base/paginator.html" %}
 	</div>
 </div>
 
@@ -80,8 +110,58 @@
 
 {% block js %}
 <script type="text/javascript">
+	function _query() {
+		var unit_name = $("#unit_name").val()
+		location.href = '/business_unit_list/?unit_name=' + unit_name
+	}
+
 	function edit(id) {
 	    location.href = '/add_business_unit?id=' + id
+    }
+
+
+    function _post(id, go_url, back_url) {
+    	var data = new Object()
+		data["id"] = id
+		$.ajax({
+		   type : "POST",
+		   url : go_url,
+		   data : data,
+		   dataType : 'json',
+		   success : function(jsons) {
+		       if(jsons.code == "0"){
+		       		alert(jsons.msg)
+		       		location.href = back_url
+		       } else {
+		       	alert(jsons.msg);
+		       }
+		   },
+		   error : function() {
+			  return;
+		   }
+		});
+    }
+
+    function report(id) {
+	    var data = new Object()
+		data["id"] = id
+		$.ajax({
+		   type : "POST",
+		   url : "/report_business_unit/",
+		   data : data,
+		   dataType : 'json',
+		   success : function(jsons) {
+		       if(jsons.code == "0"){
+		       		alert(jsons.msg)
+		       		location.href = "/business_unit_list"
+		       } else {
+		       	alert(jsons.msg);
+		       }
+		   },
+		   error : function() {
+			  return;
+		   }
+		});
     }
 
     function del(id) {

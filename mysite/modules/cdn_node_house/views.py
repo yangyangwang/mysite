@@ -12,26 +12,29 @@ import json
 
 # CDN节点机房信息
 def cdn_node_house_list(request):
-	ret_list = CdnNodeHouse.objects.all()
-	if ret_list:
-		for one in ret_list:
-			# 机房属性
-			one.cdn_house_nature = get_dict_name(one.cdn_house_nature, HouseNature)
+	try:
+		ret_list = CdnNodeHouse.objects.all()
+		if ret_list:
+			for one in ret_list:
+				# 机房属性
+				one.cdn_house_nature = get_dict_name(one.cdn_house_nature, HouseNature)
 
-			# 获取该机房的链路信息个数
-			one.link_info = get_link_num(one.id)
+				# 获取该机房的链路信息个数
+				one.link_info = get_link_num(one.id)
 
-			# 获取该机房的机架信息个数
-			one.frame_info = get_frame_num(one.id)
+				# 获取该机房的机架信息个数
+				one.frame_info = get_frame_num(one.id)
 
-			# 获取该机房的IP地址段信息个数
-			one.ipseg_info = get_ipseg_num(one.id)
+				# 获取该机房的IP地址段信息个数
+				one.ipseg_info = get_ipseg_num(one.id)
 
-			one.network_people = get_name_byid_table(int(one.network_people), NetworkManager).name
+				one.network_people = get_name_byid_table(int(one.network_people), NetworkManager).name
 
-			one.business_unit = get_name_byid_table(int(one.business_unit), BusinessUnit).unit_name
+				one.business_unit = get_name_byid_table(int(one.business_unit), BusinessUnit).unit_name
 
-			one.report_status = get_dict_name(one.report_status, ReportStatus)
+				one.report_status = get_dict_name(one.report_status, ReportStatus)
+	except:
+		print(traceback.print_exc())
 	return render_to_response("cdn_node_house_list.html", locals())
 
 
@@ -83,6 +86,7 @@ def add_cdn_node_house(request):
 	house_zipcode = request.POST.get('house_zipcode')
 	network_people = request.POST.get('network_people')
 	house_address = request.POST.get('house_address')
+	report_time = '--'
 	report_status = '1'
 
 
@@ -123,7 +127,8 @@ def add_cdn_node_house(request):
 	            house_zipcode = house_zipcode,
 	            network_people = int(network_people),
 	            house_address = house_address,
-	            report_status = report_status
+	            report_status = report_status,
+	            report_time = report_time
 	        )
 	    except:
 	        print(traceback.print_exc())
@@ -229,6 +234,12 @@ def add_house_link(request):
 	            link_access_unit = link_access_unit,
 	            link_time = link_time
 		    )
+			# 更新机房的上报状态
+			house_id_id = HouseLink.objects.get(id=tmp_id).house_id_id
+			cdn_house_id = CdnNodeHouse.objects.get(id=house_id_id).cdn_house_id
+			house_status = CdnNodeHouse.objects.get(cdn_house_id=cdn_house_id).report_status
+			if int(house_status) in [2, 4]:
+				CdnNodeHouse.objects.filter(cdn_house_id=cdn_house_id).update(report_status="3")
 		except:
 		    print(traceback.print_exc())
 		    return HttpResponse(json.dumps(back_dict_err))
@@ -339,6 +350,12 @@ def add_house_frame(request):
 		        use_type = use_type,
 	            frame_name = frame_name
 		    )
+			# 更新机房的上报状态
+			house_id_id = HouseFrame.objects.get(id=tmp_id).house_id_id
+			cdn_house_id = CdnNodeHouse.objects.get(id=house_id_id).cdn_house_id
+			house_status = CdnNodeHouse.objects.get(cdn_house_id=cdn_house_id).report_status
+			if int(house_status) in [2, 4]:
+				CdnNodeHouse.objects.filter(cdn_house_id=cdn_house_id).update(report_status="3")
 		except:
 		    print(traceback.print_exc())
 		    return HttpResponse(json.dumps(back_dict_err))
@@ -442,6 +459,12 @@ def add_house_ipseg(request):
 	            end_ip = end_ip,
 	            ip_use_type = ip_use_type
 		    )
+			# 更新机房的上报状态
+			house_id_id = HouseIpseg.objects.get(id=tmp_id).house_id_id
+			cdn_house_id = CdnNodeHouse.objects.get(id=house_id_id).cdn_house_id
+			house_status = CdnNodeHouse.objects.get(cdn_house_id=cdn_house_id).report_status
+			if int(house_status) in [2, 4]:
+				CdnNodeHouse.objects.filter(cdn_house_id=cdn_house_id).update(report_status="3")
 		except:
 		    print(traceback.print_exc())
 		    return HttpResponse(json.dumps(back_dict_err))

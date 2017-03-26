@@ -14,20 +14,30 @@ from django.core.paginator import Paginator
 # Create your views here.
 def network_manager_list(request):
     
-    # 按姓名查询   
+    # 按姓名查询
     if request.GET.get("name"):
         name = request.GET.get("name")
-        ret_list = NetworkManager.objects.filter(name=name.strip())
+        tmp_list = NetworkManager.objects.filter(name=name.strip())
     else:
-        ret_list = NetworkManager.objects.all()
+        tmp_list = NetworkManager.objects.all()
 
-    serverinfolist = NetworkManager.objects.all()
-    paginator = Paginator(serverinfolist, 2)
-    print("123:", paginator)
-    ret_list = paginator.page(1)  
-    # print("contact:", contacts)
+    # 每页列表显示的数量，读配置文件获取
+    PAGE_SIZE = 5
+    page_size = PAGE_SIZE
 
-    for one in ret_list:
+    # 要获取的第几页数据，默认为第一页
+    try:
+        page = int(request.GET.get("page",1))
+        if page < 1:
+            page = 1
+    except ValueError:
+        page = 1
+
+    # 创建分页对象
+    paginator = Paginator(tmp_list, page_size)
+    page_obj = paginator.page(page)
+
+    for one in page_obj.object_list:
         one.id_type = get_dict_name(one.id_type, IdType)
     return render_to_response('network_manager_list.html', locals())
 

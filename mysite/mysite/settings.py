@@ -44,6 +44,10 @@ INSTALLED_APPS = [
     'modules.cdn_node_info',
     'modules.cdn_node_house',
     'modules.dict_table',
+    'modules.active_resources',
+    'modules.log_management',
+    'modules.command_management',
+    'modules.suspected_exception',
 ]
 
 MIDDLEWARE = [

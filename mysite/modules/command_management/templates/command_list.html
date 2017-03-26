@@ -1,0 +1,131 @@
+{% extends "base/base.html" %}
+
+{% block css %}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="icon-home home-icon"></i>
+        <a href="#">指令管理</a>
+    </li>
+    <li class="active">指令列表</li>
+{% endblock %}
+
+{% block page_content %}
+
+<div class="col-sm-12">
+    <div class="widget-box">
+        <div class="widget-header">
+            <h4 class="smaller">控制台</h4>
+        </div>
+
+        <div class="widget-body">
+            <div class="widget-main">
+                管理指令ID: &nbsp;
+                <input type="text" name="node_name" id="node_name" value="{{node_name}}">
+
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <button class="btn btn-info btn-sm" id="gritter-center" 
+                    onclick="_query()">
+                    查询
+                </button>
+                &nbsp;&nbsp;
+                <button class="btn btn-info btn-sm" id="gritter-center" 
+                    onclick="window.location.href='{% url "add_command" %}'">
+                    新增
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div>
+    <div class="col-xs-12" style="padding-top: 10px;">
+        <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th class="center">序号</th>
+                <th class="center">管理指令ID</th>
+                <th class="center">指令类型</th>
+                <th class="center">操作类型</th>
+                <th class="center">生效时间</th>
+                <th class="center">过期时间</th>
+                <th class="center">生效的经营者</th>
+                <th class="center">生效的机房</th>
+                <th class="center">指令属主</th>
+                <th class="center">指令来源</th>
+                <th class="center">优先级</th>
+                <th class="center">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for one in page_obj.object_list %}
+                <tr class="center">
+                    <td>{{ forloop.counter }} </td>
+                    <td>{{ one.command_id }}</td>
+                    <td>{{ one.command_type }}</td>
+                    <td>{{ one.operate_type }}</td>
+                    <td>{{ one.effect_time }}</td>
+                    <td>{{ one.deadline }}</td>
+                    <td>{{ one.unit_licence }}</td>
+                    <td>{{ one.house }}</td>
+                    <td>{{ one.send_user }}</td>
+                    <td>{{ one.command_origin }}</td>
+                    <td>{{ one.priority }}</td>
+                    <td>
+                        <button class="btn btn-minier btn-info" onclick="del({{one.id}})">查看</button>
+                        <button class="btn btn-minier btn-info" onclick="edit({{one.id}})">编辑</button>
+                        <button class="btn btn-minier btn-info" onclick="del({{one.id}})">删除</button>
+                    </td>
+            {% empty %}
+                <tr class="info">
+                    <td colspan="15">
+                    <big>
+                    <strong>抱歉，目前没有数据信息。</strong>
+                    </big>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+
+        {% include  "base/paginator.html" %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+    function _query() {
+        var node_name = $("#node_name").val()
+        location.href = '/monitor_log_list/?node_name=' + node_name
+    }
+
+    function edit(id) {
+        location.href = '/add_command/?id=' + id
+    }
+
+    function del(id) {
+        var data = new Object()
+        data["id"] = id
+        $.ajax({
+           type : "POST",
+           url : "/del_command/",
+           data : data,
+           dataType : 'json',
+           success : function(jsons) {
+               if(jsons.code == "0"){
+                    location.href = "/command_list"
+               } else {
+                alert(jsons.msg);
+               }
+           },
+           error : function() {
+              return;
+           }
+        });
+    }
+</script>
+{% endblock %}

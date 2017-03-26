@@ -25,6 +25,24 @@
 			<input hidden="hidden" type="text" id="id" name="id" value="{{edit_map.id}}"/>
 			<input hidden="hidden" type="text" id="customer_id" name="customer_id" value="{{customer_id}}"/>
 			<input hidden="hidden" type="text" id="service_content" name="service_content" value="{{edit_map.service_content}}"/>
+
+			<div class="space-4"></div>
+
+			<div class="form-group">
+				<label class="col-sm-3 control-label no-padding-right" for="id_type">
+					客户名称
+				</label>
+
+				<div class="col-sm-9">
+					<select name="customer_id" id="customer_id" class="col-xs-10 col-sm-5">
+						<option value="{{edit_map.customer_id_id}}" selected="selected">{{edit_map.customer_name}}</option>
+						{% for one in customer_name_select %}
+							<option value="{{one.id}}">{{one.unit_name}}</option>
+						{% endfor %}
+					</select>
+				</div>
+			</div>
+			<div class="space-4"></div>
 			
 			<div class="row">
 				{% for one in ret_list %}
@@ -37,7 +55,9 @@
 							{% for i in one.child %}
 								<div class="checkbox">
 									<label>
-										<input name="{{one.key}}" value="{{i.key}}" type="checkbox" class="ace" onclick="checkedParent('{{one.key}}', {{one.length}})"/>
+										<input name="{{one.key}}" value="{{i.key}}" type="checkbox"
+										{% if i.key in edit_map.service_content %} checked="checked" {% endif %} 
+										 class="ace" onclick="checkedParent('{{one.key}}', {{one.length}})"/>
 										<span class="lbl">{{i.value}}</span>
 									</label>
 								</div>

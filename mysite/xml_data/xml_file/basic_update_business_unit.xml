@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<basicInfo>
+    <updateInfo>
+        <cdnId>11</cdnId>
+        <cdnName>11</cdnName>
+        <cdnAdd>1</cdnAdd>
+        <corp>1</corp>
+        <linkOfficerInfo>
+            <name>1</name>
+            <idType>2</idType>
+            <credentialsId>1</credentialsId>
+            <tel>1</tel>
+            <mobile>1</mobile>
+        </linkOfficerInfo>
+    </updateInfo>
+    <timeStamp>2017-03-21 05:02:51</timeStamp>
+</basicInfo>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<basicInfo>
+    <deleteInfo>
+        <cdnId>1</cdnId>
+        <customerDeleteList>
+            <customerId>7BNGjJWvwLyiJl0o</customerId>
+            <serviceDeleteList>
+                <serviceId>2tvqeWHnh7XFSvVd</serviceId>
+            </serviceDeleteList>
+        </customerDeleteList>
+        <timeStamp>2017-03-22 08:14:59</timeStamp>
+    </deleteInfo>
+    <timeStamp>2017-03-22 08:14:59</timeStamp>
+</basicInfo>

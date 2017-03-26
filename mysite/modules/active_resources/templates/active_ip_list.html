@@ -1,0 +1,173 @@
+{% extends "base/base.html" %}
+
+{% block css %}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="icon-home home-icon"></i>
+        <a href="#">活跃资源资源信息</a>
+    </li>
+    <li class="active">活跃IP信息</li> 
+{% endblock %}
+
+{% block page_content %}
+
+<div class="col-sm-12">
+    <div class="widget-box">
+        <div class="widget-header">
+            <h4 class="smaller">控制台</h4>
+        </div>
+
+        <div class="widget-body">
+            <div class="widget-main">
+                IP: &nbsp;
+                <input type="text" name="active_ip" id="active_ip" value="{{active_ip}}">
+
+                &nbsp;&nbsp;&nbsp;&nbsp;
+
+                节点: &nbsp;
+                <input type="text" name="node_name" id="node_name" value="{{node_name}}">
+
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <button class="btn btn-info btn-sm" id="gritter-center" 
+                    onclick="_query()">
+                    查询
+                </button>
+                &nbsp;&nbsp;
+                <button class="btn btn-info btn-sm" id="gritter-center" 
+                    onclick="report()">
+                    手动上报
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<div>
+    <div class="col-xs-12" style="padding-top: 10px;">
+        <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th class="center">序号</th>
+                <th class="center">活跃IP</th>
+                <th class="center">首次采集时间</th>
+                <th class="center">最后更新时间</th>
+                <th class="center">是否阻断</th>
+                <th class="center">访问量</th>
+                <th class="center">报备状态</th>
+                <th class="center">应用端口</th>
+                <th class="center">传输协议</th>
+                <th class="center">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for one in page_obj.object_list %}
+                <tr class="center">
+                    <td>{{ forloop.counter }} </td>
+                    <td>{{ one.active_ip }}</td>
+                    <td>{{ one.first_time }}</td>
+                    <td>{{ one.end_time }}</td>
+                    <td>{{ one.block }}</td>
+                    <td>{{ one.access_num }}</td>
+                    <td>{{ one.put_status }}</td>
+                    <td>{{ one.port }}</td>
+                    <td>{{ one.protocol }}</td>
+                    <td>
+                        {% ifequal one.block 1 %}
+                            <button class="btn btn-minier btn-info" onclick="block({{one.id}})">阻断</button>
+                        {% endifequal %}
+                    </td>
+            {% empty %}
+                <tr class="info">
+                    <td colspan="11">
+                    <big>
+                    <strong>抱歉，目前没有数据信息。</strong>
+                    </big>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+
+        {% include  "base/paginator.html" %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+     function report() {
+        var data = new Object()
+        $.ajax({
+           type : "POST",
+           url : "/report_active_ip/",
+           data : data,
+           dataType : 'json',
+           success : function(jsons) {
+               if(jsons.code == "0"){
+                    alert(jsons.msg)
+               } else {
+                alert(jsons.msg);
+               }
+           },
+           error : function() {
+              return;
+           }
+        });
+    }
+
+    function _query() {
+        var unit_name = $("#unit_name").val()
+        location.href = '/active_ip_info/?unit_name=' + unit_name
+    }
+
+    function block(id) {
+        var data = new Object()
+        data["id"] = id
+        $.ajax({
+           type : "POST",
+           url : "/block_active_ip/",
+           data : data,
+           dataType : 'json',
+           success : function(jsons) {
+               if(jsons.code == "0"){
+                    alert(jsons.msg)
+                    location.href = "/active_ip_info"
+               } else {
+                alert(jsons.msg);
+               }
+           },
+           error : function() {
+              return;
+           }
+        });
+    }
+
+    function del(id) {
+        var data = new Object()
+        data["id"] = id
+        $.ajax({
+           type : "POST",
+           url : "/del_business_unit/",
+           data : data,
+           dataType : 'json',
+           success : function(jsons) {
+               if(jsons.code == "0"){
+                    location.href = "/business_unit_list"
+               } else {
+                alert(jsons.msg);
+               }
+           },
+           error : function() {
+              return;
+           }
+        });
+    }
+</script>
+{% endblock %}
